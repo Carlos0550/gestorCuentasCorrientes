@@ -1,0 +1,84 @@
+.wrapper__form-registerUser{
+    background-color: beige;
+    backdrop-filter: blur(5.5px);
+    -webkit-backdrop-filter: blur(5.5px);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.75);
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: auto;
+    border: 1px solid rgba(255,255,255,0.90);
+    border-radius: 10px;
+    padding: 1em;
+    margin: 0 auto;
+    margin-top: 1em;
+}
+.registerUser__h1{
+    text-align: center;
+    margin: .5em;
+    text-transform: capitalize;
+    
+}
+.registerUser__form{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: auto;
+    border: 2px solid rgba(112, 112, 112, 0.87);
+    padding: 1em;
+    margin: 0 auto;
+    font-size: 1.2em;
+    background-color: rgb(255, 255, 255);
+    backdrop-filter: blur(5.5px);
+    -webkit-backdrop-filter: blur(5.5px);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.75);
+    border-radius: 10px;
+}
+.registerUser__label{
+    display: inline-block;
+    width: 100%;
+    font-size: 1.2em;
+    margin: .2em;
+    text-transform: capitalize;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: .2em;
+    background: rgba(182, 173, 173, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.178);
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    font-weight: bold;
+}
+.registerUser__input{
+    display: block;
+    width: 100%;
+    border: 1px solid rgb(216, 216, 216);
+    border-radius: 10px;
+    padding: .5em;
+    font-size: .9em;
+
+}
+.registerUser__input:focus{
+    outline: none;
+}
+.registerUser__button{
+    width: 30%;
+    font-size: 1.1em;
+    padding: .1em;
+    background-color: rgb(1, 197, 1);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    margin: 0 auto;
+    padding: .5em;
+    transition: all .2s ease-in-out;
+}
+.registerUser__button:hover{
+    transform: scale(1.05);
+}
+.registerUser__button:active{
+    transform: scale(0.9);
+    
+}
