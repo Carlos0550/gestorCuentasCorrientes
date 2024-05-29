@@ -1,10 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
+const bodyParser = require('body-parser');
+
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json()); //para apps json
+app.use(bodyParser.urlencoded({ extended: true })); //para formularios HTML
 
 const port = 3001;
 
@@ -110,18 +113,25 @@ app.post("/api/clients/retrieveDebtCustomer", (req, res)=>{
     })
 })
 
-app.post("/api/debt/create", (req, res) => {
-    const {products, idDeudor} = req.body
-    
-    const query = `INSERT INTO adeudamiento (nombre_producto,precio_unitario, cantidad, fecha, moneda,  id_usuario) VALUES ('${products.nameProduct}', '${products.price}','${products.quantity}', '${products.fecha}','${products.date}','${products.usdOrArs}', '${products.usdOrArs}', '${idDeudor}')`
-    db.query(query, (err, result)=>{
-        if (err) {
-            console.log(err)
-            res.status(500).send("Error al insertar en adeudamiento")
+app.post("/api/clients/addDebt", agregarDeuda);
+
+async function agregarDeuda(req, res) {
+    try {
+        const  products  = req.body;
+        console.log(products); 
+
+        for (let product of products) {
+            const { nameProduct, price, arsOrUsd, quantity, date, id_deudor } = product;
+            const query = `INSERT INTO adeudamiento (nombre_producto, precio_unitario, cantidad, fecha, moneda, id_usuario) VALUES ('${nameProduct}', '${price}', '${quantity}', '${date}', '${arsOrUsd}', '${id_deudor}')`;
+            await db.query(query);
         }
-        res.status(201).json(result)
-    })
-})
+
+        res.status(201).json({ message: 'Deudas agregadas correctamente' });
+    } catch (error) {
+        console.error('Error al agregar deudas:', error);
+        res.status(500).json({ error: 'Error interno del servidor al procesar la solicitud' });
+    }
+}
 
 app.listen(process.env.PORT || port, () => {
     console.log(`Servidor corriendo en el puerto ${port}`);

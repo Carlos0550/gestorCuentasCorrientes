@@ -11,14 +11,13 @@ function AddDebt() {
         return `${day}/${month}/${year}`;
     };
 
-    const { idDeudor } = useAppContext();
+    const { idDeudor, agregarDeuda, agregandoDeuda } = useAppContext();
     const [products, setProducts] = useState([]);
     const [values, setValues] = useState({
         nameProduct: "",
         price: "",
         arsOrUsd: "ARS",
         quantity: "",
-        description: "",
         date: getDate(),
         id_deudor: idDeudor
     });
@@ -32,17 +31,31 @@ function AddDebt() {
     };
 
     const editProduct = (index) =>{
+        //accedemos al producto del array products en el indice especificado, y guardamos ese producto en la variable
+        const productToEdit = products[index];
+        setValues({
+            nameProduct: productToEdit.nameProduct,
+            price: productToEdit.price,
+            arsOrUsd: productToEdit.arsOrUsd,
+            quantity: productToEdit.quantity,
+            description: productToEdit.description,
+            date: productToEdit.date,
+            id_deudor: idDeudor
+        })
+        //luego de editarlo en el formulario, usamos filter para crear un nuevo array exluyendo el producto editado
 
+        const updatedProduct = products.filter((_,idx) => idx !== index);
+        //por ultimo, actualizamos el array de productos
+        setProducts(updatedProduct);
+    }
+
+    const deleteProduct = (index) => {
+        const updatedProducts = products.filter((_,idx)=> idx !== index)
+        setProducts(updatedProducts)
     }
 
     const handleSaveProduct = () => {
-        // Guardar el producto actual en el array de productos
-        if (values.nameProduct !== "" || values.price !== "" || values.arsOrUsd !== "" || values.quantity !== "" || values.description !== "") {
-            setProducts(prevProducts => [...prevProducts, values]);
-        }else{
-            alert("Todos los campos son obligatorios")
-        }
-
+        setProducts(prevProducts => [...prevProducts, values]);
         setValues({
             nameProduct: "",
             price: "",
@@ -52,9 +65,25 @@ function AddDebt() {
             date: getDate(),
             id_deudor: idDeudor
         });
-
-    
     };
+
+    const verifyArray = () =>{
+        if(products.length === 0){
+            return false
+        }else{
+            return true
+        }
+    }
+    const sendProducts = () =>{
+        products.map((product)=>{
+            console.log(product)
+        })
+        if(verifyArray()){
+            agregarDeuda(products)
+        }else{
+            alert("No hay productos agregados")
+        }
+    }
 
     return (
         <>
@@ -64,7 +93,7 @@ function AddDebt() {
                 </label>
                 <label htmlFor="price" className='add__producto-label'>
                     Precio Unitario:
-                    <input type="number" name="price" value={values.price} onChange={handleChange} placeholder='Ingrese solo el valor ' className='add__producto-input' />
+                    <input type="text" name="price" value={values.price} onChange={handleChange} placeholder='Ingrese solo el valor ' className='add__producto-input' />
                 </label>
                 <label htmlFor="arsOrUsd" className='add__producto-label'>Moneda:
                     <select name="arsOrUsd" value={values.arsOrUsd} onChange={handleChange} className='add__producto-input'>
@@ -90,11 +119,12 @@ function AddDebt() {
                         <p><strong>Nombre:</strong> {product.nameProduct}</p>
                         <p><strong>Precio:</strong> {product.price} {product.arsOrUsd}</p>
                         <p><strong>Cantidad:</strong> {product.quantity}</p>
-                        <button value={index} onClick={editProduct}>Editar</button>
-                        <button>Eliminar</button>
+                        <button onClick={()=>editProduct(index)}>Editar</button>
+                        <button onClick={()=>deleteProduct(index)}>Eliminar</button>
                         <hr />
                     </div>
                 ))}
+                <button disabled={agregandoDeuda} onClick={sendProducts}>{agregandoDeuda ? "Guardando":"Guardar Factura"}</button>
             </div>
         </>
     );

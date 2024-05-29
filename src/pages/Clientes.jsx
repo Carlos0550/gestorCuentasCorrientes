@@ -112,7 +112,7 @@ const activateAddDebt = () => {
             
           }) : ""}
         </div>
-        {datosDeudor ? <button className='addDebt__button' onClick={activateAddDebt}>{debtActivate ? "Cancelar" : "Añadir deuda"}</button>: ""}
+        {datosDeudor ? <button className='addDebt__button' onClick={activateAddDebt} style={{ backgroundColor: debtActivate ? 'red' : '' }}>{debtActivate ? "Cancelar" : "Añadir deuda"}</button>: ""}
           {debtActivate ? <AddDebt /> : ""}
       </div>
     </>

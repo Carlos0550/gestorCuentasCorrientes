@@ -224,6 +224,55 @@ export const AppContextProvider = ({ children }) => {
           });
       }
   }, [datosDelCliente]);
+
+  const [agregandoDeuda, setAgregandoDeuda] = useState(false)
+  const agregarDeuda = async (values) => {
+    console.log(values)
+    setAgregandoDeuda(true)
+    try {
+      const response = await axios.post("http://localhost:3001/api/clients/addDebt", values);
+      if (response.status === 201) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "success",
+          title: "Deuda Agregada exitosamente!"
+        });
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "error",
+          title: "Ocurrio un error al intentar añadir la deuda"
+        });
+      }
+    }finally{
+      setTimeout(() => {
+        setAgregandoDeuda(false)
+      }, 500);
+    }
+    
+  }
     return (
         <AppContext.Provider value={{ createUser,
           creandoUsuario,
@@ -231,7 +280,10 @@ export const AppContextProvider = ({ children }) => {
           buscandoUsuario,
           datosDelCliente,
           idDeudor,
-          datosDeudor
+          datosDeudor,
+          agregarDeuda,
+          agregandoDeuda
+          
          }}>
             {children}
         </AppContext.Provider>
