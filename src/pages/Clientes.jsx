@@ -3,8 +3,8 @@ import { useAppContext } from '../componentes/context';
 import { IoPerson } from 'react-icons/io5';
 import { MdPermIdentity, MdAttachEmail } from 'react-icons/md';
 import { FaRegAddressCard } from 'react-icons/fa';
-import Swal from 'sweetalert2';
 
+import AddDebt from '../componentes/debt/AddDebt';
 import './css/clientes.css';
 
 function Clientes() {
@@ -22,6 +22,17 @@ function Clientes() {
       [name]: value,
     }));
   };
+
+  const [debtActivate, setDebtActivate] = useState(false);
+  const [buttonCount, setButtonCount] = useState(0);
+const activateAddDebt = () => {
+  setDebtActivate(true);
+  setButtonCount(buttonCount + 1);
+  if (buttonCount >= 1) {
+    setDebtActivate(false);
+    setButtonCount(0);
+  }
+}
 
   const sendData = (event) => {
     event.preventDefault();
@@ -88,6 +99,7 @@ function Clientes() {
                  <p>Nombre: {item.nombre}</p>
                  <p>Apellido: {item.apellido}</p>
                  <p>Deudor: {item.deudor}</p>
+                 
                  {datosDeudor && datosDeudor ? datosDeudor.map((item,index)=>{
                   <div key={index}>
                     <p>Producto: {item.producto}</p>
@@ -97,8 +109,11 @@ function Clientes() {
                  }): "El cliente no tiene deudas"}
               </div>
             )
+            
           }) : ""}
         </div>
+        {datosDeudor ? <button className='addDebt__button' onClick={activateAddDebt}>{debtActivate ? "Cancelar" : "Añadir deuda"}</button>: ""}
+          {debtActivate ? <AddDebt /> : ""}
       </div>
     </>
   );

@@ -1,0 +1,52 @@
+.add__producto-form {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: auto;
+    border: 2px solid rgba(112, 112, 112, 0.87);
+    padding: 1em;
+    margin: 0 auto;
+    
+    margin-top: 1em;
+}
+.add__producto-label{
+    font-weight: bold;
+    margin-bottom: .5em;
+    margin-top: .5em;
+}
+.add__producto-input{
+    display: block;
+    width: 100%;
+    border: 1px solid rgb(216, 216, 216);
+    border-radius: 10px;
+    padding: .5em;
+    font-size: .9em;
+}
+.btn__saveProduct{
+    width: 20%;
+    margin: 1em;
+    background-color: rgba(255,255,255,0.5);
+    border: none;
+    border-radius: 10px;
+    outline: 2px solid rgb(216, 216, 216);
+    padding: .5em;
+    transition: all .2s ease-in-out;
+}
+.btn__saveProduct:hover{
+    transform: scale(1.03);
+    background-color: rgba(214, 214, 214, 0.5);
+}
+.btn__saveProduct:active{
+    transform: scale(0.9);
+}
+
+.btn__addOtherProduct{
+    width: 30%;
+    margin: 1em;
+    background-color: rgba(255,255,255,0.5);
+    border: none;
+    border-radius: 10px;
+    outline: 2px solid rgb(216, 216, 216);
+    padding: .5em;
+    transition: all .2s ease-in-out;
+}

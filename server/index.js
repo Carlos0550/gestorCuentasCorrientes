@@ -98,19 +98,28 @@ app.post("/api/clients/retrieveDebtCustomer", (req, res)=>{
     const query = `SELECT * FROM adeudamiento WHERE id_usuario = ${idDeudor}`
     db.query(query, (err, result)=>{
         if (result === null || result=== undefined) {
-            return res.status(404).send("El usuario no tiene deudas")
+            return res.status(404)
         }
         if (err) {
-            res.status(500).send("Ocurrio un error Buscando las deudas del usuario")
+            res.status(500)
             console.log(err)
             return;
         }
-        if(result.length === 0){
-            res.status(400).send("No se han encontrado deudas")
-            return;
-        }
-
+        
         res.status(200).json(result)
+    })
+})
+
+app.post("/api/debt/create", (req, res) => {
+    const {products, idDeudor} = req.body
+    
+    const query = `INSERT INTO adeudamiento (nombre_producto,precio_unitario, cantidad, fecha, moneda,  id_usuario) VALUES ('${products.nameProduct}', '${products.price}','${products.quantity}', '${products.fecha}','${products.date}','${products.usdOrArs}', '${products.usdOrArs}', '${idDeudor}')`
+    db.query(query, (err, result)=>{
+        if (err) {
+            console.log(err)
+            res.status(500).send("Error al insertar en adeudamiento")
+        }
+        res.status(201).json(result)
     })
 })
 

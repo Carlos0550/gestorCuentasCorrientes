@@ -102,7 +102,6 @@ export const AppContextProvider = ({ children }) => {
       try {
         const response = await axios.post("http://localhost:3001/api/clients/find", values)
         setDatosDelCliente(response.data)
-        console.log(response.data)
         
         if(response.status === 201){
           const Toast = Swal.mixin({
@@ -187,7 +186,6 @@ export const AppContextProvider = ({ children }) => {
             title: "400: Debe proporcionar nombre, apellido o dni para la búsqueda."
           });
         }else{
-          console.log(error)
           const Toast = Swal.mixin({
             toast: true,
             position: "top-end",
