@@ -22,7 +22,7 @@ function Navbar({ children }) {
     <>
       <nav>
         <div className='nav__container'>
-          <h1 className='nav__logo'>Logo</h1>
+          <h1 className='nav__logo'>Gestión Corriente</h1>
 
           <label htmlFor='menu' className='nav__label'>
             <IoMdMenu />

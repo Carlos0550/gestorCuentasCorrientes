@@ -15,6 +15,7 @@ export const useAppContext = () => {
 export const AppContextProvider = ({ children }) => {
   const [creandoUsuario, setCreandoUsuario] = useState(false)
   const [datosDelCliente, setDatosDelCliente] = useState(null)
+  const [nombreCompleto, setNombreCompleto] = useState(null)
     const createUser = async (values) => {
       setCreandoUsuario(true)
             try {
@@ -98,11 +99,13 @@ export const AppContextProvider = ({ children }) => {
     const [idDeudor, setIdDeudor] = useState(null)
     const[buscandoUsuario, setBuscandoUsuario] = useState(false)
     const findUser = async(values) =>{
+
       setBuscandoUsuario(true)
       try {
         const response = await axios.post("http://localhost:3001/api/clients/find", values)
         setDatosDelCliente(response.data)
         
+        console.log(response.data)
         if(response.status === 201){
           const Toast = Swal.mixin({
             toast: true,
@@ -208,6 +211,12 @@ export const AppContextProvider = ({ children }) => {
         }, 500);
       }
     }
+    useEffect(()=>{
+      datosDelCliente && datosDelCliente.map((item)=>{
+        setNombreCompleto(`${item.nombre} ${item.apellido}`)
+      })
+    },[datosDelCliente])
+  
     const [datosDeudor, setDatosDeudor] = useState(null)
     useEffect(() => {
       if (datosDelCliente && datosDelCliente.length > 0) {
@@ -216,21 +225,23 @@ export const AppContextProvider = ({ children }) => {
 
               try {
                   const response = await axios.post("http://localhost:3001/api/clients/retrieveDebtCustomer", { idDeudor });
-                  console.log(response.data);
                   setDatosDeudor(response.data)
               } catch (error) {
                   console.log("Error al recuperar deuda del cliente:", error);
               }
           });
       }
-  }, [datosDelCliente]);
+  }, [datosDelCliente, idDeudor]);
 
   const [agregandoDeuda, setAgregandoDeuda] = useState(false)
   const agregarDeuda = async (values) => {
     console.log(values)
     setAgregandoDeuda(true)
     try {
-      const response = await axios.post("http://localhost:3001/api/clients/addDebt", values);
+      const response = await axios.post("http://localhost:3001/api/clients/addDebt", {
+        values: values,
+        nombreCompleto: nombreCompleto
+      });
       if (response.status === 201) {
         const Toast = Swal.mixin({
           toast: true,
@@ -271,8 +282,18 @@ export const AppContextProvider = ({ children }) => {
         setAgregandoDeuda(false)
       }, 500);
     }
-    
   }
+  const [allDebts,setAllDebts] = useState(null)
+  useEffect(()=>{
+    (async () =>{
+      try {
+        const response = await axios.get("http://localhost:3001/api/clients/getAllDebts");
+        setAllDebts(response.data);
+      } catch (error) {
+        console.error("Error al obtener todas las deudas:", error);
+      }
+    })();
+  },[])
     return (
         <AppContext.Provider value={{ createUser,
           creandoUsuario,
@@ -282,7 +303,8 @@ export const AppContextProvider = ({ children }) => {
           idDeudor,
           datosDeudor,
           agregarDeuda,
-          agregandoDeuda
+          agregandoDeuda,
+          allDebts
           
          }}>
             {children}

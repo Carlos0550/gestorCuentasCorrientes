@@ -105,3 +105,44 @@
 .addDebt__button:active{
     transform: scale(0.9);
 }
+
+.user__container{
+    border: 2px solid rgba(112, 112, 112, 0.87);
+    border-radius: 10px;
+    padding: .3em;
+}
+.user__container p{
+    font-weight: 500;
+    margin-top: .3em;
+    margin-bottom: .2em;
+}
+.fichero__cliente{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1em;
+    width: 100%;
+    height: auto;
+    border: 2px solid rgba(112, 112, 112, 0.87);
+    border-radius: 10px;
+    padding: 1em;
+    margin: 0 auto;
+    margin-top: 1em;
+    font-size: 1em;
+    position: relative;
+}
+.fichero__container{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    text-wrap: wrap;
+    outline: 2px solid rgba(182, 173, 173, 0.75);
+    border-radius: .3em;
+    padding: .2em;
+}
+.fichero__total{
+    position: absolute;
+    top: 465px;
+    right: 0;
+    bottom: auto;
+}

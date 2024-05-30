@@ -9,6 +9,21 @@ import './css/clientes.css';
 
 function Clientes() {
   const { findUser, buscandoUsuario, datosDelCliente,datosDeudor } = useAppContext();
+  function processingDebtData() {
+    let totalArs = 0;
+    let totalUsd = 0;
+    console.log("Productos: ", datosDeudor);
+    datosDeudor && datosDeudor.forEach(producto => {
+      if (producto.moneda === "ARS") {
+        totalArs += producto.precio_unitario * producto.cantidad;
+      } else if (producto.moneda === "USD") {
+        totalUsd += producto.precio_unitario * producto.cantidad * 1200;
+      }
+    });
+    let total = totalArs + totalUsd;
+    return total;
+  }
+  
   const [values, setValues] = useState({
     nombre: '',
     apellido: '',
@@ -39,6 +54,8 @@ const activateAddDebt = () => {
     findUser(values);
   };
 
+  
+ 
   return (
     <>
       <div className='wrapper__form-findUser'>
@@ -90,30 +107,47 @@ const activateAddDebt = () => {
           </button>
         </form>
       </div>
-      <div className='wrapper__form-findUser'>
-        <div className='user__container'>
+      <div className={datosDeudor ? 'wrapper__form-findUser' : ""}>
+
+      <div className={datosDeudor ? 'user__container' : ""}>
           {datosDelCliente ? datosDelCliente.map((item, index)=>{
             return(
               <div key={index}>
-                <p># {index}</p>
                  <p>Nombre: {item.nombre}</p>
                  <p>Apellido: {item.apellido}</p>
-                 <p>Deudor: {item.deudor}</p>
-                 
-                 {datosDeudor && datosDeudor ? datosDeudor.map((item,index)=>{
-                  <div key={index}>
-                    <p>Producto: {item.producto}</p>
-                    <p>Cantidad: {item.cantidad}</p>
-                    <p>Precio Unitario: precio unitario</p>
-                  </div>
-                 }): "El cliente no tiene deudas"}
+                 <p>Correo Electronico: {item.email}</p>
+                 <p>DNI: {item.dni}</p>
+                 <p>Dirección: {item.direccion}</p>
+                 <p>Telefono/s: {item.telefono}</p>
+                 {datosDeudor ? <button className='addDebt__button' onClick={activateAddDebt} style={{ backgroundColor: debtActivate ? 'red' : '' }}>{debtActivate ? "Cancelar" : "Añadir deuda"}</button>: ""}
+
               </div>
+              
             )
             
           }) : ""}
+        {debtActivate ? <AddDebt /> : ""}
+
         </div>
-        {datosDeudor ? <button className='addDebt__button' onClick={activateAddDebt} style={{ backgroundColor: debtActivate ? 'red' : '' }}>{debtActivate ? "Cancelar" : "Añadir deuda"}</button>: ""}
-          {debtActivate ? <AddDebt /> : ""}
+        <p style={{margin: "1em 0"}}>{datosDeudor ? <strong>Fichero del cliente</strong>: ""}</p>
+        
+        <div className={datosDeudor ? 'fichero__cliente' : ""}>
+        {datosDeudor && datosDeudor ? datosDeudor.map((item, index)=>{
+                return(
+                  <div key={index} className='fichero__container'>
+                    
+                    <p><strong>#{index}</strong></p>
+                    <p><strong>Producto: </strong>{item.nombre_producto}</p>
+                    <p><strong>Cantidad:</strong> {item.cantidad}</p>
+                    <p><strong>Precio Unitario:</strong> {item.precio_unitario}{item.moneda}</p>
+                    <p><strong>Fecha:</strong> {item.fecha}</p>
+                  </div>
+                )
+                
+        }): ""}
+        {datosDeudor && datosDeudor ? <p className='fichero__total'><strong>Saldo Total: ${processingDebtData()}</strong></p>: ""}
+
+        </div>
       </div>
     </>
   );

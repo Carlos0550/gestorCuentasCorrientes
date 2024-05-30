@@ -36,7 +36,7 @@ app.post("/api/clients/create", (req, res) => {
             if (count > 0) {
                 res.status(409).send('Error, ya existe un usuario con ese DNI!');
             } else {
-                const insertUserQuery = `INSERT INTO usuarios (nombre, apellido, email, dni, telefono, direccion, deudor, id_deudor) VALUES ('${nombre}', '${apellido}', '${email}', '${dni}', '${telefono}', '${direccion}', 'No', '${idDeudor}')`;
+                const insertUserQuery = `INSERT INTO usuarios (nombre, apellido, email, dni, telefono, direccion, id_deudor) VALUES ('${nombre}', '${apellido}', '${email}', '${dni}', '${telefono}', '${direccion}','${idDeudor}')`;
 
                 db.query(insertUserQuery, (err, result) => {
                     if (err) {
@@ -45,17 +45,7 @@ app.post("/api/clients/create", (req, res) => {
                         return;
                     }
 
-                    const insertAdeudamientoQuery = `INSERT INTO adeudamiento (id_usuario) VALUES ('${idDeudor}')`;
-
-                    db.query(insertAdeudamientoQuery, (errAdeudamiento, resultAdeudamiento) => {
-                        if (errAdeudamiento) {
-                            console.error('Error al insertar en adeudamientos:', errAdeudamiento);
-                            res.status(500).send('Error al insertar en adeudamientos');
-                            return;
-                        }
-
-                        res.status(201).send('Usuario creado exitosamente');
-                    });
+                    res.status(201).send('Usuario creado correctamente');
                 });
             }
         });
@@ -95,34 +85,57 @@ app.post("/api/clients/find", (req, res) => {
     });
 });
 
-app.post("/api/clients/retrieveDebtCustomer", (req, res)=>{
-    const {idDeudor} = req.body
-    
-    const query = `SELECT * FROM adeudamiento WHERE id_usuario = ${idDeudor}`
-    db.query(query, (err, result)=>{
-        if (result === null || result=== undefined) {
-            return res.status(404)
-        }
+app.post("/api/clients/retrieveDebtCustomer", (req, res) => {
+    const { idDeudor } = req.body;
+    console.log(req.body);
+
+    const query = `SELECT * FROM adeudamiento WHERE id_usuario = ?`;
+    db.query(query, idDeudor, (err, result) => {
         if (err) {
-            res.status(500)
-            console.log(err)
-            return;
+            console.error("Error al ejecutar la consulta:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
         }
-        
-        res.status(200).json(result)
-    })
+
+        if (result.length === 0) {
+            console.log("No se encontraron resultados para idDeudor:", idDeudor);
+            return res.status(200).json([]); // Enviar un arreglo vacío si no hay resultados
+        }
+
+        console.log("Resultados encontrados:", result);
+        res.status(200).json(result); // Enviar los resultados encontrados
+    });
+});
+
+app.get("/api/clients/getAllDebts", (req, res)=>{
+    const query = `SELECT * FROM adeudamiento`;
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error("Error al ejecutar la consulta:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+
+        if (result.length === 0) {
+            console.log("No se encontraron resultados");
+            return res.status(200).json([]); 
+        }
+
+        console.log("Resultados encontrados:", result);
+        res.status(200).json(result); 
+    });
 })
+
 
 app.post("/api/clients/addDebt", agregarDeuda);
 
 async function agregarDeuda(req, res) {
     try {
-        const  products  = req.body;
-        console.log(products); 
+        console.log(req.body);
+        const  products  = req.body.values;
+        const nombreCompleto = req.body.nombreCompleto
 
         for (let product of products) {
             const { nameProduct, price, arsOrUsd, quantity, date, id_deudor } = product;
-            const query = `INSERT INTO adeudamiento (nombre_producto, precio_unitario, cantidad, fecha, moneda, id_usuario) VALUES ('${nameProduct}', '${price}', '${quantity}', '${date}', '${arsOrUsd}', '${id_deudor}')`;
+            const query = `INSERT INTO adeudamiento (nombre_producto, precio_unitario, cantidad, fecha, moneda, id_usuario, nombre_completo) VALUES ('${nameProduct}', '${price}', '${quantity}', '${date}', '${arsOrUsd}', '${id_deudor}', '${nombreCompleto}')`;
             await db.query(query);
         }
 

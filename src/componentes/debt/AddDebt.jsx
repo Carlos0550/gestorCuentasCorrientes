@@ -11,7 +11,7 @@ function AddDebt() {
         return `${day}/${month}/${year}`;
     };
 
-    const { idDeudor, agregarDeuda, agregandoDeuda } = useAppContext();
+    const { idDeudor, agregarDeuda, agregandoDeuda, findUser } = useAppContext();
     const [products, setProducts] = useState([]);
     const [values, setValues] = useState({
         nameProduct: "",
@@ -80,6 +80,7 @@ function AddDebt() {
         })
         if(verifyArray()){
             agregarDeuda(products)
+            
         }else{
             alert("No hay productos agregados")
         }
