@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "./debt.css";
 import { useAppContext } from '../context';
-
+import Swal from 'sweetalert2';
 function AddDebt() {
     const getDate = () => {
         const date = new Date();
@@ -11,7 +11,7 @@ function AddDebt() {
         return `${day}/${month}/${year}`;
     };
 
-    const { idDeudor, agregarDeuda, agregandoDeuda, findUser } = useAppContext();
+    const { idDeudor, agregarDeuda, agregandoDeuda, traerDatosDeudor, activateAddDebt } = useAppContext();
     const [products, setProducts] = useState([]);
     const [values, setValues] = useState({
         nameProduct: "",
@@ -55,8 +55,26 @@ function AddDebt() {
     }
 
     const handleSaveProduct = () => {
-        setProducts(prevProducts => [...prevProducts, values]);
-        setValues({
+        if (values.nameProduct === "" || values.price === ""  || values.quantity === "") {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "error",
+                title: "Hay campos vacios"
+              }); 
+              return;
+        }else{
+            setProducts(prevProducts => [...prevProducts, values]);
+            setValues({
             nameProduct: "",
             price: "",
             arsOrUsd: "ARS",
@@ -65,6 +83,7 @@ function AddDebt() {
             date: getDate(),
             id_deudor: idDeudor
         });
+        }
     };
 
     const verifyArray = () =>{
@@ -80,9 +99,26 @@ function AddDebt() {
         })
         if(verifyArray()){
             agregarDeuda(products)
+            traerDatosDeudor()
+            activateAddDebt()
             
         }else{
-            alert("No hay productos agregados")
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "error",
+                title: "No hay productos ingresados"
+              }); 
+              return;
         }
     }
 
@@ -113,19 +149,19 @@ function AddDebt() {
 
             {/* Visualización de los productos agregados */}
             <div className="productos-agregados">
-                <h3>Productos Agregados:</h3>
+                <h3>Confirmación de productos:</h3>
                 {products.map((product, index) => (
                     <div key={index} className="producto">
-                        <p>Producto N° {index+1}</p>
+                        <p>#{index+1}</p>
                         <p><strong>Nombre:</strong> {product.nameProduct}</p>
                         <p><strong>Precio:</strong> {product.price} {product.arsOrUsd}</p>
                         <p><strong>Cantidad:</strong> {product.quantity}</p>
-                        <button onClick={()=>editProduct(index)}>Editar</button>
-                        <button onClick={()=>deleteProduct(index)}>Eliminar</button>
-                        <hr />
+                        <button onClick={()=>editProduct(index)} className='btn-edit'>Editar</button>
+                        <button onClick={()=>deleteProduct(index)} className='btn-delete'>Eliminar</button>
+                        
                     </div>
                 ))}
-                <button disabled={agregandoDeuda} onClick={sendProducts}>{agregandoDeuda ? "Guardando":"Guardar Factura"}</button>
+                <button disabled={agregandoDeuda} onClick={sendProducts} className='btn-save-allProducts'>{agregandoDeuda ? "Guardando":"Guardar Factura"}</button>
             </div>
         </>
     );

@@ -105,7 +105,7 @@ export const AppContextProvider = ({ children }) => {
         const response = await axios.post("http://localhost:3001/api/clients/find", values)
         setDatosDelCliente(response.data)
         
-        console.log(response.data)
+        // console.log(response.data)
         if(response.status === 201){
           const Toast = Swal.mixin({
             toast: true,
@@ -226,12 +226,29 @@ export const AppContextProvider = ({ children }) => {
               try {
                   const response = await axios.post("http://localhost:3001/api/clients/retrieveDebtCustomer", { idDeudor });
                   setDatosDeudor(response.data)
+                  console.log("Deudas del cleinte recuperadas", response.data);
               } catch (error) {
                   console.log("Error al recuperar deuda del cliente:", error);
               }
           });
       }
   }, [datosDelCliente, idDeudor]);
+  const traerDatosDeudor = () => {
+    if (datosDelCliente && datosDelCliente.length > 0) {
+      datosDelCliente.forEach(async (item) => {
+          setIdDeudor(item.id_deudor);
+
+          try {
+              const response = await axios.post("http://localhost:3001/api/clients/retrieveDebtCustomer", { idDeudor });
+              setDatosDeudor(response.data)
+              
+              console.log("Deudas del cliente recuperadas", response.data);
+          } catch (error) {
+              console.log("Error al recuperar deuda del cliente:", error);
+          }
+      });
+  }
+  }
 
   const [agregandoDeuda, setAgregandoDeuda] = useState(false)
   const agregarDeuda = async (values) => {
@@ -283,6 +300,74 @@ export const AppContextProvider = ({ children }) => {
       }, 500);
     }
   }
+const [updatingDebt, setUpdatingDebt]= useState(false)
+const updateDebtCustomer = async (formData) => {
+  setUpdatingDebt(true);
+
+  try {
+    let entrega = 0;
+
+    // Convertir formData.get('id') a número entero en base 10
+    const productId = parseInt(formData.get('id'), 10);
+    const ultimo_estado_entrega = parseInt(formData.get('nuevoValor') || 0);
+
+    // Buscar el producto por su ID
+    const producto = datosDeudor.find(producto => producto.id === productId);
+
+    if (producto) {
+      const montoUltimaEntrega = parseInt(producto.monto_entrega || 0); 
+      console.log("Datos del producto a actualizar: ", producto)
+      const nuevoValor = parseInt(formData.get('nuevoValor'), 10);
+
+      entrega = montoUltimaEntrega + nuevoValor; 
+
+      console.log("nuevo valor", nuevoValor);
+      console.log("entrega", entrega);
+
+      const response = await axios.put('http://localhost:3001/api/debts/updateDebtCustomer', {
+        fechaEntrega: formData.get('fechaEntrega'),
+        id: formData.get('id'),
+        nuevoValor: entrega,
+        ultimaEntrega: ultimo_estado_entrega
+      });
+
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Deuda actualizada exitosamente!"
+      });  
+      traerDatosDeudor()
+    } else {
+      console.log(`No se encontró ningún producto con ID ${formData.get('id')}`);
+    }
+  } catch (error) {
+    console.log("Error al actualizar deuda:", error);
+  } finally {
+    setUpdatingDebt(false); // Aseguramos cambiar el estado de updatingDebt al finalizar
+  }
+};
+const [ultimaEntrega, setUltimaEntrega] = useState(null)
+const verUltimaEntrega= async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/debts/getLastEntrega", {data :{idDeudor}});
+    setUltimaEntrega(response.data)
+    console.log(response.data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
   const [allDebts,setAllDebts] = useState(null)
   useEffect(()=>{
     (async () =>{
@@ -294,6 +379,69 @@ export const AppContextProvider = ({ children }) => {
       }
     })();
   },[])
+
+  const [debtActivate, setDebtActivate] = useState(null);
+  const [buttonCount, setButtonCount] = useState(0);
+  const activateAddDebt = () => {
+    setDebtActivate(true);
+    setButtonCount(buttonCount + 1);
+    if (buttonCount >= 1) {
+      setDebtActivate(false);
+      setButtonCount(0);
+    }
+    
+  }
+
+  const deleteIndividualDebt = async (id) => {
+    try {
+      const response = await axios.delete("http://localhost:3001/api/clients/deleteIndividualDebt", { data: { idDelete: id } });
+      traerDatosDeudor();
+    } catch (error) {
+      console.error(error);
+    } 
+  };
+  
+  const cancelarFichero = async ()=>{
+    console.log("Id del deudor: ", idDeudor)
+    try {
+      const response = await axios.delete("http://localhost:3001/api/clients/cancelarFichero", {data: {idDeudor} });
+      console.log(response)
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Fichero cancelado exitosamente!"
+      }); 
+      traerDatosDeudor()
+    } catch (error) {
+      console.log(error)
+
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire({
+        icon: "error",
+        title: "Ocurrio un error inesperado, intente de nuevo!"
+      }); 
+    }
+  }
     return (
         <AppContext.Provider value={{ createUser,
           creandoUsuario,
@@ -304,7 +452,14 @@ export const AppContextProvider = ({ children }) => {
           datosDeudor,
           agregarDeuda,
           agregandoDeuda,
-          allDebts
+          allDebts,
+          updateDebtCustomer,
+          updatingDebt,
+          traerDatosDeudor,
+          activateAddDebt,debtActivate
+          ,deleteIndividualDebt,cancelarFichero
+          ,verUltimaEntrega, ultimaEntrega
+          
           
          }}>
             {children}

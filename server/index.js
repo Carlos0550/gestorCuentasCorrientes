@@ -101,7 +101,6 @@ app.post("/api/clients/retrieveDebtCustomer", (req, res) => {
             return res.status(200).json([]); // Enviar un arreglo vacío si no hay resultados
         }
 
-        console.log("Resultados encontrados:", result);
         res.status(200).json(result); // Enviar los resultados encontrados
     });
 });
@@ -119,7 +118,6 @@ app.get("/api/clients/getAllDebts", (req, res)=>{
             return res.status(200).json([]); 
         }
 
-        console.log("Resultados encontrados:", result);
         res.status(200).json(result); 
     });
 })
@@ -137,6 +135,7 @@ async function agregarDeuda(req, res) {
             const { nameProduct, price, arsOrUsd, quantity, date, id_deudor } = product;
             const query = `INSERT INTO adeudamiento (nombre_producto, precio_unitario, cantidad, fecha, moneda, id_usuario, nombre_completo) VALUES ('${nameProduct}', '${price}', '${quantity}', '${date}', '${arsOrUsd}', '${id_deudor}', '${nombreCompleto}')`;
             await db.query(query);
+        
         }
 
         res.status(201).json({ message: 'Deudas agregadas correctamente' });
@@ -146,6 +145,69 @@ async function agregarDeuda(req, res) {
     }
 }
 
+/// Ruta para actualizar los campos dia_entrega y monto_entrega
+app.put("/api/debts/updateDebtCustomer", (req, res) => {
+
+    const formData = req.body;
+
+    const { id, fechaEntrega, nuevoValor, ultimaEntrega } = formData;
+    console.log(formData)
+
+    const query = `UPDATE adeudamiento SET dia_entrega = '${fechaEntrega}', monto_entrega = '${nuevoValor}', ultimo_estado_entrega = ${ultimaEntrega} WHERE id = '${id}'`;
+
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error("Error al ejecutar consulta de actualización:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+
+        res.status(200).json({ message: 'Campos dia_entrega y monto_entrega actualizados correctamente' });
+    });
+});
+
+app.delete("/api/clients/deleteIndividualDebt", (req, res) => {
+    const { idDelete } = req.body;
+    if (!idDelete) {
+        res.status(400).json({ error: 'Debe proporcionar un ID de usuario' });
+    }
+
+    const query = `DELETE FROM adeudamiento WHERE id = '${idDelete}'`;
+    db.query(query, (err,result)=>{
+        if (err) {
+            console.error("Error al ejecutar consulta de eliminación:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+        res.status(200).json({ message: 'Deuda eliminada correctamente' });
+    })
+  });
+  
+app.delete("/api/clients/cancelarFichero", (req,res)=>{
+    const { idDeudor } = req.body;
+    console.log("id deudor",idDeudor)
+    const query = `DELETE FROM adeudamiento WHERE id_usuario = '${idDeudor}'`;
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error("Error al ejecutar la consulta:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+    });
+    res.status(200).json({ message: 'Fichero cancelado correctamente' });
+    
+})
+
+app.get("/api/debts/getLastEntrega", (req,res)=>{
+    const {idDeudor} = req.body
+    const query = `SELECT * FROM adeudamiento WHERE id_usuario = '${idDeudor}'`;
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error("Error al ejecutar la consulta:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+        res.status(200).json(result);
+
+    });
+
+})
 app.listen(process.env.PORT || port, () => {
     console.log(`Servidor corriendo en el puerto ${port}`);
 });

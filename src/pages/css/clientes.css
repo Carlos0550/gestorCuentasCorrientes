@@ -1,11 +1,9 @@
 .wrapper__form-findUser {
-    background-color: beige;
-    backdrop-filter: blur(5.5px);
-    -webkit-backdrop-filter: blur(5.5px);
+    background-color: #f0ebd8;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.75);
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width:95%;
     height: auto;
     border: 1px solid rgba(255, 255, 255, 0.90);
     border-radius: 10px;
@@ -28,10 +26,10 @@
     border: 2px solid rgba(112, 112, 112, 0.87);
     padding: 1em;
     margin: 0 auto;
+    
     font-size: 1.2em;
-    background-color: rgb(255, 255, 255);
-    backdrop-filter: blur(5.5px);
-    -webkit-backdrop-filter: blur(5.5px);
+    background-color: #f0ebd8;
+   
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.75);
     border-radius: 10px;
 }
@@ -45,7 +43,7 @@
     border: 2px solid black;
     border-radius: 5px;
     padding: .2em;
-    background: rgba(182, 173, 173, 0.25);
+    background-color: #f0ebd86c;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.178);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -66,10 +64,10 @@
 }
 
 .findUser__button {
-    width: 30%;
+    min-width: 25%;
     font-size: 1.1em;
     padding: .1em;
-    background-color: rgb(1, 197, 1);
+    background-color: #0d1321;
     border: none;
     border-radius: 10px;
     color: white;
@@ -87,18 +85,17 @@
     transform: scale(0.9);
 }
 .addDebt__button{
-    display: block;
-    width: 20%;
-    font-size: .8em;
-    background-color: rgb(1, 197, 1);
+    padding: .5em;
     border: none;
+    margin: 0 ;
     border-radius: 10px;
+    background-color: #0d1321;
     color: white;
     font-weight: bold;
-    padding: .5em;
     transition: all .2s ease-in-out;
 }
 .addDebt__button:hover{
+    filter: drop-shadow(0 0 0.5rem #0d1321);
     transform: scale(1.05);
 }
 
@@ -107,42 +104,148 @@
 }
 
 .user__container{
-    border: 2px solid rgba(112, 112, 112, 0.87);
-    border-radius: 10px;
-    padding: .3em;
-}
-.user__container p{
-    font-weight: 500;
-    margin-top: .3em;
-    margin-bottom: .2em;
-}
-.fichero__cliente{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
-    gap: 1em;
+    gap: .5em;
     width: 100%;
     height: auto;
-    border: 2px solid rgba(112, 112, 112, 0.87);
+    outline: 2px solid rgba(112, 112, 112, 0.87);
     border-radius: 10px;
     padding: 1em;
     margin: 0 auto;
     margin-top: 1em;
     font-size: 1em;
-    position: relative;
+    justify-content: center;
+}
+.user__container p{
+    max-width: 100%;
+    background-color: rgba(255, 255, 255, 0.90);
+    padding: .5em;
+    border-radius: 10px;
+    font-weight: bold;
+}
+.fichero__cliente{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: .5em;
+    width: 100%;
+    height: auto;
+    outline: 2px solid rgba(112, 112, 112, 0.87);
+    border-radius: 10px;
+    padding: 1em;
+    margin: 0 auto;
+    margin-top: 1em;
+    font-size: 1em;
+    justify-content: center;
+
+}
+.fichero__title{
+    background-color: rgba(255, 255, 255, 0.90);
+    padding: .5em;
+    border-radius: 10px;
+    font-weight: bold;
+    margin: 1em;
 }
 .fichero__container{
     display: flex;
+    width: 100%;
     flex-direction: column;
+    outline: 2px solid rgba(0, 0, 0, 0.20);
     flex-wrap: wrap;
-    text-wrap: wrap;
-    outline: 2px solid rgba(182, 173, 173, 0.75);
     border-radius: .3em;
     padding: .2em;
 }
+.fichero__container p{
+    max-width: 100%;
+}
 .fichero__total{
-    position: absolute;
-    top: 465px;
-    right: 0;
-    bottom: auto;
+   margin-top: .1em;
+}
+.fichero__datos-finales{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: .5em;
+    width: 100%;
+    height: auto;
+    outline: 2px solid rgba(112, 112, 112, 0.87);
+    border-radius: 10px;
+    padding: 1em;
+    margin: 0 auto;
+    margin-top: 1em;
+    font-size: 1em;
+    justify-content: center;
+}
+.fichero__datos-finales p{
+    max-width: 100%;
+    background-color: rgba(255, 255, 255, 0.90);
+    padding: .5em;
+    border-radius: 10px;
+    text-transform: capitalize;
+}
+.fichero__datos-finales button{
+    padding: .5em;
+    border: none;
+    margin: 0 ;
+    border-radius: 10px;
+    background-color: #0d1321;
+    color: white;
+    font-weight: bold;
+    transition: all .1s ease-in-out;
+}
+.fichero__datos-finales button:hover{
+    filter: drop-shadow(0 0 0.5rem #0d1321);
+    transform: scale(1.05);
+}
+.client-data div:first-child{
+    background-color: #0d1321;
+    text-transform: uppercase;
+    color: white;
+    font-size: 1.1em;
+    padding: .2em;
+   
+}
+.client-data div:first-child p{
+    margin: .5em;
+}
+.client-data div:last-child{
+    justify-content: left;
+    text-transform: capitalize;
+    
+    padding: .5em;
+}
+.client-data div{
+    background-color: rgba(255, 255, 255, 0.60);
+    border-radius: 10px;
+    padding: 1px;
+    margin: 5px;
+}
+.client-data div p{
+    margin: .5em;
+}
+
+.fichero__buttons{
+    display: flex;
+    flex-direction: row;
+    gap: .5em;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+.fichero__buttons button{
+    padding: .5em;
+    border: none;
+    margin: 0 ;
+    border-radius: 10px;
+    background-color: #0d1321;
+    color: white;
+    font-weight: bold;
+    transition: all .1s ease-in-out;
+}
+.fichero__buttons button:hover{
+    filter: drop-shadow(0 0 0.5rem #0d1321);
+    transform: scale(1.05);
+    
 }
