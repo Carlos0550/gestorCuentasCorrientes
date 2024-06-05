@@ -226,7 +226,7 @@ export const AppContextProvider = ({ children }) => {
               try {
                   const response = await axios.post("http://localhost:3001/api/clients/retrieveDebtCustomer", { idDeudor });
                   setDatosDeudor(response.data)
-                  console.log("Deudas del cleinte recuperadas", response.data);
+                  // console.log("Deudas del cleinte recuperadas", response.data);
               } catch (error) {
                   console.log("Error al recuperar deuda del cliente:", error);
               }
@@ -276,6 +276,7 @@ export const AppContextProvider = ({ children }) => {
           title: "Deuda Agregada exitosamente!"
         });
       }
+      
     } catch (error) {
       if (error.response.status === 500) {
         const Toast = Swal.mixin({
@@ -297,6 +298,8 @@ export const AppContextProvider = ({ children }) => {
     }finally{
       setTimeout(() => {
         setAgregandoDeuda(false)
+        mostrarPagosTotales()
+        getRegistersPays()
       }, 500);
     }
   }
@@ -328,7 +331,8 @@ const updateDebtCustomer = async (formData) => {
         fechaEntrega: formData.get('fechaEntrega'),
         id: formData.get('id'),
         nuevoValor: entrega,
-        ultimaEntrega: ultimo_estado_entrega
+        ultimaEntrega: ultimo_estado_entrega,
+        id_deudor: idDeudor
       });
 
       const Toast = Swal.mixin({
@@ -347,6 +351,9 @@ const updateDebtCustomer = async (formData) => {
         title: "Deuda actualizada exitosamente!"
       });  
       traerDatosDeudor()
+      setTimeout(() => {
+        mostrarPagosTotales()
+      }, 1000);
     } else {
       console.log(`No se encontró ningún producto con ID ${formData.get('id')}`);
     }
@@ -356,17 +363,6 @@ const updateDebtCustomer = async (formData) => {
     setUpdatingDebt(false); // Aseguramos cambiar el estado de updatingDebt al finalizar
   }
 };
-const [ultimaEntrega, setUltimaEntrega] = useState(null)
-const verUltimaEntrega= async () => {
-  try {
-    const response = await axios.get("http://localhost:3001/api/debts/getLastEntrega", {data :{idDeudor}});
-    setUltimaEntrega(response.data)
-    console.log(response.data)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 
   const [allDebts,setAllDebts] = useState(null)
   useEffect(()=>{
@@ -396,6 +392,9 @@ const verUltimaEntrega= async () => {
     try {
       const response = await axios.delete("http://localhost:3001/api/clients/deleteIndividualDebt", { data: { idDelete: id } });
       traerDatosDeudor();
+      setTimeout(() => {
+        mostrarPagosTotales()
+      }, 1000);
     } catch (error) {
       console.error(error);
     } 
@@ -422,6 +421,10 @@ const verUltimaEntrega= async () => {
         title: "Fichero cancelado exitosamente!"
       }); 
       traerDatosDeudor()
+      setTimeout(() => {
+        mostrarPagosTotales()
+      }, 1000);
+
     } catch (error) {
       console.log(error)
 
@@ -442,6 +445,102 @@ const verUltimaEntrega= async () => {
       }); 
     }
   }
+
+  const insertTotalPay = async (formDataEntrega) =>{
+    // for (var pair of formDataEntrega) {
+    //   console.log("Recibiendo en la funcion (insertTotalPay):", pair[0]+ ":" + pair[1])
+    // }
+    try {
+      const response = await axios.post("http://localhost:3001/api/clients/insertTotalPays", 
+      {data: 
+        { id_usuario: formDataEntrega.get("id_cliente_deudor"), 
+          monto_entrega: formDataEntrega.get("monto_entrega"),
+          fecha_entrega: formDataEntrega.get("fecha_entrega")
+        }
+      });
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+ }
+ const [pagosTotalesData, setPagosTotalesData] = useState(null);
+
+useEffect(() => {
+  let timeout;
+  if (idDeudor) {
+    timeout = setTimeout(async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/api/clients/getTotalPays", {
+          params: { id_deudor: idDeudor }
+        });
+        setPagosTotalesData(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1000); // Espera 1 segundo antes de ejecutar la llamada
+  }
+
+  return () => clearTimeout(timeout); // Limpiar el timeout si idDeudor cambia antes de ejecutarse
+
+}, [idDeudor, datosDelCliente]); 
+
+const mostrarPagosTotales = async () =>{
+  try {
+    const response = await axios.get("http://localhost:3001/api/clients/getTotalPays", {
+      params: { id_deudor: idDeudor }
+    });
+    setPagosTotalesData(response.data);
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+      }
+  });
+  Toast.fire({
+      icon: "success",
+      title: "Datos actualizados"
+  });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//obtener el registro de entregas totales
+const [getRegisterPaysData, setGetRegisterPaysData] = useState(null)
+useEffect(()=>{
+  let timeout;
+  if (idDeudor) {
+    timeout = setTimeout(async() => {
+      try {
+        const response = await axios.get("http://localhost:3001/api/clients/getRegisterPays", {
+          params: { id_deudor: idDeudor }
+        });
+        setGetRegisterPaysData(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1000);
+  }
+  return () => clearTimeout(timeout);
+},[idDeudor, datosDelCliente])
+async function getRegistersPays() {
+  try {
+    const response = await axios.get("http://localhost:3001/api/clients/getRegisterPays", {
+      params: { id_deudor: idDeudor }
+    });
+    setGetRegisterPaysData(response.data);
+    console.log(response.data);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
     return (
         <AppContext.Provider value={{ createUser,
           creandoUsuario,
@@ -453,12 +552,14 @@ const verUltimaEntrega= async () => {
           agregarDeuda,
           agregandoDeuda,
           allDebts,
-          updateDebtCustomer,
+          updateDebtCustomer, insertTotalPay,
           updatingDebt,
           traerDatosDeudor,
           activateAddDebt,debtActivate
           ,deleteIndividualDebt,cancelarFichero
-          ,verUltimaEntrega, ultimaEntrega
+          ,pagosTotalesData, mostrarPagosTotales,
+          getRegistersPays, getRegisterPaysData
+         
           
           
          }}>

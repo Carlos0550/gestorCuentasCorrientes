@@ -145,25 +145,50 @@ async function agregarDeuda(req, res) {
     }
 }
 
-/// Ruta para actualizar los campos dia_entrega y monto_entrega
-app.put("/api/debts/updateDebtCustomer", (req, res) => {
+// app.put("/api/debts/updateDebtCustomer", (req, res) => {
+//   const formData = req.body;
+//   const { id, fechaEntrega, nuevoValor, ultimaEntrega } = formData;
 
-    const formData = req.body;
+//   // Iniciar una transacción
+//   db.beginTransaction((err) => {
+//       if (err) {
+//           console.error('Error al iniciar transacción:', err);
+//           return res.status(500).json({ error: 'Error interno del servidor' });
+//       }
 
-    const { id, fechaEntrega, nuevoValor, ultimaEntrega } = formData;
-    console.log(formData)
+//       try {
+//           const updateQuery = `UPDATE adeudamiento 
+//                                SET dia_entrega = ?, monto_entrega = ?, ultimo_estado_entrega = ? 
+//                                WHERE id = ?`;
 
-    const query = `UPDATE adeudamiento SET dia_entrega = '${fechaEntrega}', monto_entrega = '${nuevoValor}', ultimo_estado_entrega = ${ultimaEntrega} WHERE id = '${id}'`;
+//           db.query(updateQuery, [fechaEntrega, nuevoValor, ultimaEntrega, id], (err, result) => {
+//               if (err) {
+//                   console.error("Error al ejecutar consulta de actualización en adeudamiento:", err);
+//                   return db.rollback(() => {
+//                       res.status(500).json({ error: "Error interno del servidor" });
+//                   });
+//               }
 
-    db.query(query, (err, result) => {
-        if (err) {
-            console.error("Error al ejecutar consulta de actualización:", err);
-            return res.status(500).json({ error: "Error interno del servidor" });
-        }
+//               // Commit la transacción si la actualización fue exitosa
+//               db.commit((err) => {
+//                   if (err) {
+//                       console.error("Error al hacer commit de la transacción:", err);
+//                       return db.rollback(() => {
+//                           res.status(500).json({ error: "Error interno del servidor" });
+//                       });
+//                   }
+//                   res.json({ message: "Actualización exitosa" });
+//               });
+//           });
+//       } catch (error) {
+//           console.error('Error al ejecutar transacción:', error);
+//           db.rollback(() => {
+//               res.status(500).json({ error: 'Error interno del servidor' });
+//           });
+//       }
+//   });
+// });
 
-        res.status(200).json({ message: 'Campos dia_entrega y monto_entrega actualizados correctamente' });
-    });
-});
 
 app.delete("/api/clients/deleteIndividualDebt", (req, res) => {
     const { idDelete } = req.body;
@@ -181,32 +206,202 @@ app.delete("/api/clients/deleteIndividualDebt", (req, res) => {
     })
   });
   
-app.delete("/api/clients/cancelarFichero", (req,res)=>{
+app.delete("/api/clients/cancelarFichero", (req, res) => {
     const { idDeudor } = req.body;
-    console.log("id deudor",idDeudor)
-    const query = `DELETE FROM adeudamiento WHERE id_usuario = '${idDeudor}'`;
-    db.query(query, (err, result) => {
-        if (err) {
-            console.error("Error al ejecutar la consulta:", err);
-            return res.status(500).json({ error: "Error interno del servidor" });
-        }
+  
+    db.beginTransaction(err => {
+      if (err) {
+        console.error("Error al iniciar la transacción:", err);
+        return res.status(500).json({ error: "Error interno del servidor" });
+      }
+  
+      const deleteQueryAdeudamientos = `DELETE FROM adeudamiento WHERE id_usuario = '${idDeudor}'`;
+      const deleteQueryEntregas = `DELETE FROM entregas WHERE id_cliente_deudor = '${idDeudor}'`;
+      const deleteQueryListaDeEntregas = `DELETE FROM lista_de_entregas WHERE id_deudor = '${idDeudor}'`;
+        db.query(deleteQueryAdeudamientos, (err, result) => {
+          if (err) {
+            console.error("Error al ejecutar la consulta DELETE adeudamientos:", err);
+            return db.rollback(() => {
+              res.status(500).json({ error: "Error interno del servidor" });
+            });
+          }
+  
+        db.query(deleteQueryEntregas, (err, result) => {
+          if (err) {
+            console.error("Error al ejecutar la consulta DELETE entregas:", err);
+            return db.rollback(() => {
+              res.status(500).json({ error: "Error interno del servidor" });
+            });
+          }
+        db.query(deleteQueryListaDeEntregas, (err, result) => {
+          if (err) {
+            console.error("Error al ejecutar la consulta DELETE listaD_de_EMTREGAS:", err);
+            return db.rollback(() => {
+              res.status(500).json({ error: "Error interno del servidor" });
+            });
+          }
+        })
+  
+          db.commit(err => {
+            if (err) {
+              console.error("Error al hacer commit de la transacción:", err);
+              return db.rollback(() => {
+                res.status(500).json({ error: "Error interno del servidor" });
+              });
+            }
+            res.status(200).json({ message: 'Fichero cancelado correctamente' });
+          });
+        });
+      });
     });
-    res.status(200).json({ message: 'Fichero cancelado correctamente' });
-    
-})
+});
 
-app.get("/api/debts/getLastEntrega", (req,res)=>{
-    const {idDeudor} = req.body
-    const query = `SELECT * FROM adeudamiento WHERE id_usuario = '${idDeudor}'`;
+app.post('/api/clients/insertTotalPays', (req, res) => {
+  const { id_usuario, monto_entrega, fecha_entrega } = req.body.data;
+
+  // Iniciar una transacción
+  db.beginTransaction((err) => {
+    if (err) {
+      console.error('Error al iniciar transacción:', err);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+
+    const checkQuery = `SELECT COUNT(*) AS count FROM entregas WHERE id_cliente_deudor = '${id_usuario}'`;
+
+    db.query(checkQuery, (err, result) => {
+      if (err) {
+        console.error('Error al contar registros:', err);
+        return db.rollback(() => {
+          res.status(500).json({ error: 'Error interno del servidor' });
+        });
+      }
+
+      const count = result[0].count;
+
+      if (count === 0) {
+        // Si no hay registros, insertar uno nuevo en entregas
+        const insertQuery = `INSERT INTO entregas (monto_entrega, fecha_entrega, id_cliente_deudor) VALUES ('${monto_entrega}', '${fecha_entrega}', '${id_usuario}')`;
+
+        db.query(insertQuery, (err, result) => {
+          if (err) {
+            console.error('Error al insertar nuevos datos en entregas:', err);
+            return db.rollback(() => {
+              res.status(400).json({ error: 'Error al insertar datos en entregas' });
+            });
+          }
+
+          // Aquí puedes realizar la inserción en la otra tabla
+          const listaDeIntregasInsertQuery = `INSERT INTO lista_de_entregas (id_deudor, monto_entrega, fecha_entrega) VALUES ('${id_usuario}', '${monto_entrega}', '${fecha_entrega}')`;
+
+          db.query(listaDeIntregasInsertQuery, (err, result) => {
+            if (err) {
+              console.error('Error al insertar datos en otra_tabla:', err);
+              return db.rollback(() => {
+                res.status(400).json({ error: 'Error al insertar datos en otra_tabla' });
+              });
+            }
+
+            // Commit de la transacción si todo fue exitoso
+            db.commit((err) => {
+              if (err) {
+                console.error('Error al realizar commit de la transacción:', err);
+                return db.rollback(() => {
+                  res.status(500).json({ error: 'Error interno del servidor' });
+                });
+              }
+              res.status(200).json({ message: 'Datos insertados correctamente' });
+            });
+          });
+        });
+      } else {
+        // Si hay registros, obtener el monto existente y sumarlo con el nuevo
+        const fetchLastPayData = `SELECT monto_entrega FROM entregas WHERE id_cliente_deudor = '${id_usuario}'`;
+
+        db.query(fetchLastPayData, (err, result) => {
+          if (err) {
+            console.error('Error al obtener monto existente:', err);
+            return db.rollback(() => {
+              res.status(500).json({ error: 'Error interno del servidor' });
+            });
+          }
+
+          const montoExistente = result[0].monto_entrega || 0; // por si no existen datos
+          const nuevoMonto = parseFloat(montoExistente) + parseFloat(monto_entrega);
+
+          // Actualizar el monto de entrega con el nuevo valor
+          const updateQuery = `UPDATE entregas SET monto_entrega = '${nuevoMonto}', fecha_entrega = '${fecha_entrega}' WHERE id_cliente_deudor = '${id_usuario}'`;
+
+          db.query(updateQuery, (err, result) => {
+            if (err) {
+              console.error('Error al actualizar datos existentes:', err);
+              return db.rollback(() => {
+                res.status(400).json({ error: 'Error al actualizar datos' });
+              });
+            }
+
+            // Aquí puedes realizar la inserción en la otra tabla
+            const insertRegisterQuery = `INSERT INTO lista_de_entregas (monto_entrega, fecha_entrega, id_deudor) VALUES ('${monto_entrega}', '${fecha_entrega}', '${id_usuario}')`;
+
+            db.query(insertRegisterQuery, (err, result) => {
+              if (err) {
+                console.error('Error al insertar datos en otra_tabla:', err);
+                return db.rollback(() => {
+                  res.status(400).json({ error: 'Error al insertar datos en otra_tabla' });
+                });
+              }
+
+              // Commit de la transacción si todo fue exitoso
+              db.commit((err) => {
+                if (err) {
+                  console.error('Error al realizar commit de la transacción:', err);
+                  return db.rollback(() => {
+                    res.status(500).json({ error: 'Error interno del servidor' });
+                  });
+                }
+                res.status(200).json({ message: 'Datos actualizados correctamente' });
+              });
+            });
+          });
+        });
+      }
+    });
+  });
+});
+
+
+
+  app.get("/api/clients/getTotalPays", (req, res) => {
+    const { id_deudor } = req.query;
+  
+    if (id_deudor !== undefined && id_deudor !== null) {
+      const query = `SELECT * FROM entregas WHERE id_cliente_deudor = '${id_deudor}'`;
+  
+      db.query(query, (err, results) => {
+        if (err) {
+          console.error('Error en la consulta SQL:', err);
+          return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+        console.log("Datos obtenidos")
+        res.status(200).json(results);
+      });
+    } else {
+      console.log("No se proporcionó un ID de deudor");
+      res.status(400).json({ error: 'No se proporcionó un ID de deudor válido' });
+    }
+  });
+  
+app.get("/api/clients/getRegisterPays", (req,res)=>{
+    const {id_deudor} = req.query
+    const query = `SELECT * FROM lista_de_entregas WHERE id_deudor = '${id_deudor}'`;
+
     db.query(query, (err, result) => {
         if (err) {
-            console.error("Error al ejecutar la consulta:", err);
-            return res.status(500).json({ error: "Error interno del servidor" });
+            console.error('Error en la consulta SQL:', err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
         }
+        console.log("Datos obtenidos")
         res.status(200).json(result);
-
     });
-
 })
 app.listen(process.env.PORT || port, () => {
     console.log(`Servidor corriendo en el puerto ${port}`);

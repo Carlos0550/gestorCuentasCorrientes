@@ -5,13 +5,59 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import { useAppContext } from '../context';
 function Example({ show, payData }) {
-  const { updateDebtCustomer, updatingDebt } = useAppContext()
+  const { updateDebtCustomer, getRegistersPays, mostrarPagosTotales } = useAppContext()
   const [value, setValue] = useState("")
   const handleInput = (e) => {
     setValue(e.target.value)
   }
-  const validateForm = (e) => {
-    if (value === "") {
+
+  const validarSaldo = (e) => {
+    let saldoRestante = 0;
+    if (payData.moneda === "USD") {
+      saldoRestante += (payData.precio_unitario * 1200) - payData.monto_entrega;
+      if (value > saldoRestante) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "error",
+          title: "No puede introducir un valor mayor al saldo restante"
+        });
+        return saldoRestante
+      }else{
+        confirmChanges(e)
+      }
+    }else if(payData.moneda === "ARS"){
+      saldoRestante += (payData.precio_unitario) - payData.monto_entrega;
+      if (value > saldoRestante) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "error",
+          title: "No puede introducir un valor mayor al saldo restante"
+        });
+        return saldoRestante
+      }else{
+        confirmChanges(e)
+      }
+    }else if(value == ""){
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -28,20 +74,25 @@ function Example({ show, payData }) {
         title: "Ingresa un valor"
       });
       return
-    } else {
+    }else{
       confirmChanges(e)
     }
   }
+  
+
 
   const confirmChanges = (e) => {
     e.preventDefault();
     // Asegúrate de que value esté definido y sea válido
     if (!isNaN(value) && payData && payData.id && value !== undefined) {
       var formData = new FormData();
+
       var date = new Date();
       formData.append("fechaEntrega", date.toISOString().split('T')[0]);
       formData.append("id", payData.id);
       formData.append("nuevoValor", value);
+
+      
 
       Swal.fire({
         title: "Guardar Cambios?",
@@ -50,10 +101,31 @@ function Example({ show, payData }) {
         denyButtonText: `Cancelar`
       }).then((result) => {
         if (result.isConfirmed) {
-          // Lógica de confirmación de cambios
           updateDebtCustomer(formData);
+          setTimeout(() => {
+            mostrarPagosTotales()
+            getRegistersPays()
+            show()
+        }, 1500);
+
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Deuda actualizada exitosamente!"
+      });  
+ 
+      
         } else if (result.isDenied) {
-          // Manejo de cancelación
           const Toast = Swal.mixin({
             toast: true,
             position: "top-end",
@@ -119,7 +191,7 @@ function Example({ show, payData }) {
           <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
         </div>
         <div >
-          <button onClick={validateForm} style={{ marginTop: ".5em" }} className='addDebt__button'>Guardar Entrega</button>
+          <button onClick={validarSaldo} style={{ marginTop: ".5em" }} className='addDebt__button'>Guardar Entrega</button>
         </div>
       </>
     );
