@@ -11,7 +11,19 @@ import './css/clientes.css';
 import Example from '../componentes/modal/Example';
 import PagosTotales from '../componentes/modal/PagosTotales';
 import EditarDatosCliente from '../componentes/modal/EditarDatosCliente';
+
+import { supabase } from '../Auth/supabase';
+import { useNavigate } from 'react-router-dom';
 function Clientes() {
+  const navigate = useNavigate()
+  useEffect(()=>{
+    (async ()=>{
+        const { data, error } = await supabase.auth.getSession()
+        if (!data.session) {
+            navigate('/login')
+        }
+    })()
+},[])
   const date = new Date()
   let day = date.getDate()
   let month = date.getMonth() + 1

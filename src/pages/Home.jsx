@@ -1,9 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { IoPerson } from 'react-icons/io5';
 import { FaRegAddressCard } from 'react-icons/fa';
 import "./css/home.css"
 import { useAppContext } from '../componentes/context'
+import { supabase } from '../Auth/supabase';
+import { useNavigate } from 'react-router-dom';
 function Home() {
+  const navigate = useNavigate()
+  useEffect(()=>{
+    (async ()=>{
+        const { data, error } = await supabase.auth.getSession()
+        if (!data.session) {
+            navigate('/login')
+        }
+    })()
+},[])
   const { debtHistory,obtenerHistorial, buscandoUsuario } = useAppContext()
 
   const date = new Date()

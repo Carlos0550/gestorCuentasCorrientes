@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppContext } from '../componentes/context';
 import { IoPerson } from "react-icons/io5";
 import { MdPermIdentity, MdAttachEmail } from "react-icons/md";
@@ -6,9 +6,19 @@ import { FaPhoneAlt } from "react-icons/fa";
 import { TbRouteSquare } from "react-icons/tb";
 import { FaRegAddressCard } from "react-icons/fa";
 import Swal from 'sweetalert2';
-
+import { supabase } from '../Auth/supabase';
 import "./css/crearUsuario.css"
+import { useNavigate } from 'react-router-dom';
 function CrearUsuario() {
+  const navigate = useNavigate()
+  useEffect(()=>{
+    (async ()=>{
+        const { data, error } = await supabase.auth.getSession()
+        if (!data.session) {
+            navigate('/login')
+        }
+    })()
+},[])
   const {createUser, creandoUsuario} = useAppContext()
   const [values, setValues] = useState({
     nombre: '',
