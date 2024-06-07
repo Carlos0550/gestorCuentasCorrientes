@@ -1,0 +1,42 @@
+.wrapper__show-history{
+    display: flex;
+    flex-direction: column;
+    background-color: #F0EBD8;
+    margin: 1em;
+    border-radius: .5em;
+    padding: 1em;
+    font-size: 1.1em;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0px 0px 5px rgba(255,255,255,0.80);
+}
+
+.p__client-name{
+    background-color: #0D1321;
+    outline: 3px solid rgba(255, 255, 255, 0.8);
+    border-radius: 1em;
+    padding: 1em;
+    color: white;
+    box-shadow: 0 0 15px black;
+}
+.wrapper-products{
+    border: 2px solid rgba(190, 190, 190, 0.8);
+    border-radius: 5px;
+    background-color: white;
+    margin: .5em;
+    text-align: left;
+    padding: .3em;  
+}
+
+.wrapper-products p{
+    font-weight: 500;
+    background-color: #1D2D44;
+    border-radius: 5px;
+    padding: .2em;
+    color: white;
+}
+.wrapper-products p:first-child{
+    background-color: #0D1321;
+    color: white;
+    padding: .3em;
+}

@@ -399,12 +399,47 @@ const updateDebtCustomer = async (formData) => {
       console.error(error);
     } 
   };
+  function getDate() {
+    const date = new Date();
+    let day = date.getDate()
+    let month = date.getMonth() + 1
+    let year = date.getFullYear()
+    let fullDate = `${day}-${month}-${year}`
+    return fullDate
+  }
   
-  const cancelarFichero = async ()=>{
-    console.log("Id del deudor: ", idDeudor)
+  const cancelarFichero = async (itemsToSave)=>{
+    const cliente = datosDelCliente && datosDelCliente[0];
+    const formData = new FormData()
+    formData.append('id', cliente.id);
+    formData.append('nombre', cliente.nombre);
+    formData.append('apellido', cliente.apellido);
+    formData.append('dni', cliente.dni);
+    formData.append('id_deudor', cliente.id_deudor);
+    formData.append('fecha_cancelacion', getDate());
+
+    itemsToSave.forEach((item, index) => {
+      formData.append(`productos[${index}][id]`, item.id);
+      formData.append(`productos[${index}][nombre_producto]`, item.nombre_producto);
+      formData.append(`productos[${index}][precio_unitario]`, item.precio_unitario);
+      formData.append(`productos[${index}][cantidad]`, item.cantidad);
+      formData.append(`productos[${index}][fecha_compra]`, item.fecha);
+      formData.append(`productos[${index}][id_usuario]`, item.id_usuario);
+      formData.append(`productos[${index}][nombre_completo]`, item.nombre_completo);
+      formData.append(`productos[${index}][moneda]`, item.moneda);
+   
+    });
+
+    for (let pair of formData) {
+      console.log("Datos del fichero: ", pair[0], ":", pair[1])
+    }
     try {
-      const response = await axios.delete("http://localhost:3001/api/clients/cancelarFichero", {data: {idDeudor} });
-      console.log(response)
+      const response = await axios.post("http://localhost:3001/api/clients/cancelarFichero", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -447,9 +482,9 @@ const updateDebtCustomer = async (formData) => {
   }
 
   const insertTotalPay = async (formDataEntrega) =>{
-    // for (var pair of formDataEntrega) {
-    //   console.log("Recibiendo en la funcion (insertTotalPay):", pair[0]+ ":" + pair[1])
-    // }
+    for (var pair of formDataEntrega) {
+      console.log("Recibiendo en la funcion (insertTotalPay):", pair[0]+ ":" + pair[1])
+    }
     try {
       const response = await axios.post("http://localhost:3001/api/clients/insertTotalPays", 
       {data: 
@@ -474,7 +509,6 @@ useEffect(() => {
           params: { id_deudor: idDeudor }
         });
         setPagosTotalesData(response.data);
-        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -507,7 +541,6 @@ const mostrarPagosTotales = async () =>{
       title: "Datos actualizados"
   });
   } catch (error) {
-    console.log(error);
   }
 }
 //obtener el registro de entregas totales
@@ -521,9 +554,7 @@ useEffect(()=>{
           params: { id_deudor: idDeudor }
         });
         setGetRegisterPaysData(response.data);
-        console.log(response.data);
       } catch (error) {
-        console.log(error);
       }
     }, 1000);
   }
@@ -538,6 +569,55 @@ async function getRegistersPays() {
     console.log(response.data);
   } catch (error) {
     console.log(error);
+  }
+}
+
+const editClientData = (values) =>{
+
+}
+const [debtHistory, setDebtHistory] = useState([])
+const obtenerHistorial = async (data) =>{
+  console.log(data)
+  try {
+    const response = await axios.post("http://localhost:3001/api/clients/obtenerHistorialDelCliente", data)
+    setDebtHistory(response.data)
+    console.log(response.data)
+  } catch (error) {
+    console.log(error)
+    if (error.response.status === 404) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    Toast.fire({
+        icon: "error",
+        title: `${error.response.data.error}`
+    });
+    }
+    if (error.response.status === 500) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    Toast.fire({
+        icon: "error",
+        title: `${error.response.data.error}`
+    });
+  }
   }
 }
 
@@ -558,8 +638,9 @@ async function getRegistersPays() {
           activateAddDebt,debtActivate
           ,deleteIndividualDebt,cancelarFichero
           ,pagosTotalesData, mostrarPagosTotales,
-          getRegistersPays, getRegisterPaysData
-         
+          getRegistersPays, getRegisterPaysData,
+          editClientData
+         ,debtHistory, obtenerHistorial
           
           
          }}>

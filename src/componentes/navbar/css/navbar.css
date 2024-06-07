@@ -8,8 +8,13 @@ nav{
 }
 
 .nav__logo{
-    font-size: 1.5em;
-    font-weight: 900;
+    
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        text-shadow: 1px 0 10px rgba(255,255,255,0.80);
+        margin: .3em;
+    
 }
 
 .nav__container{

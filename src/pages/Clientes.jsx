@@ -10,7 +10,7 @@ import './css/clientes.css';
 
 import Example from '../componentes/modal/Example';
 import PagosTotales from '../componentes/modal/PagosTotales';
-import { Button } from 'react-bootstrap';
+import EditarDatosCliente from '../componentes/modal/EditarDatosCliente';
 function Clientes() {
   const date = new Date()
   let day = date.getDate()
@@ -48,36 +48,14 @@ function Clientes() {
     })
     return total
   }
-  // setTimeout(() => {
-  //   transferPaydProducts()
-  // }, 1000);
-  // function transferPaydProducts() {
-  //   let total = 0;
-  //   if (SaldoTotalParaModal() == 0) {
-  //     // console.log("Saldo cancelado")
-  //   } else {
-  //     // console.log("Saldo pendiente")
-  //   }
-
-  // }
+  
   const SaldoTotalParaModal = () => {
     let total = 0;
     total = parseInt((processingDebtChange() || 0) - (processingTotalChange() || 0));
-    // console.log("Saldo total: ", total)
-
     return total;
   };
 
 
-
-  // useEffect(()=>{
-  //   console.log("Pagos totales: ", pagosTotalesData)
-  //   console.log("Get register pays: ", getRegisterPaysData)
-  // },[pagosTotalesData, getRegisterPaysData])
-
-useEffect(()=>{
-  console.log("Productos: ", datosDeudor)
-},[])
   const getIdDeleteProduct = (id) => {
     Swal.fire({
       title: "Eliminar el producto?",
@@ -106,17 +84,24 @@ useEffect(()=>{
       }
     });
   }
-  let oneProduct = datosDeudor.length == 1 ? datosDeudor.map((item)=> item.precio_unitario)[0] : 0
-  console.log(oneProduct)
+  let oneProduct = datosDeudor && datosDeudor.length == 1 ? datosDeudor.map((item)=> item.precio_unitario)[0] : 0
+ 
   const deleteAllProducts = () => {
+    // let formData = new FormData()
+    
     Swal.fire({
-      title: `${datosDeudor.length == 1 && saldoTotal < 0? `Si continua debera devolverle al cliente $${Math.abs(saldoTotal)} debido a que el total de las entregas supera a su saldo` : datosDeudor.length == 1 && (saldoTotal - oneProduct) < 0 ? `Si continua debera devolverle al cliente $${Math.abs(oneProduct - saldoTotal)} debido a que el precio de la entrega supera el precio del producto` : "Cancelar fichero?"}`,
+      title: `¿Esta seguro?
+              Podrá ver el historial del cliente en home`,
       showDenyButton: true,
       confirmButtonText: "Cancelar fichero",
       denyButtonText: `Salir`
     }).then((result) => {
       if (result.isConfirmed) {
-        cancelarFichero()
+
+        
+        setTimeout(() => {
+          cancelarFichero(datosDeudor, datosDelCliente)
+        }, 500);
       } else if (result.isDenied) {
         const Toast = Swal.mixin({
           toast: true,
@@ -157,7 +142,6 @@ useEffect(()=>{
     findUser(values);
     setValues({
       nombre: '',
-      apellido: '',
       dni: '',
     })
   };
@@ -196,6 +180,25 @@ useEffect(()=>{
       setButtonModalCountModalEntregasTotales(0)
     }
   }
+
+  const [activateEditClientDataModal, setActivateClientDataModal] = useState(false)
+  const [buttonCountModalClientData, setButtonCountModalClientData] = useState(0)
+  const [showModalEditClientData, setShowModalClientData] = useState(false)
+  const editClientData = (id) =>{
+    // console.log("Editar producto con id",id)
+    setActivateClientDataModal(true)
+    setShowModalClientData(true)
+    setButtonCountModalClientData(buttonCountModalClientData + 1)
+    if (buttonCountModalClientData) {
+      setActivateClientDataModal(false)
+      setShowModalClientData(false)
+      setButtonCountModalClientData(0)
+    }
+    
+  }
+
+ 
+
   const saldoTotal = SaldoTotalParaModal() || "0";
 
 
@@ -216,19 +219,6 @@ useEffect(()=>{
               className='findUser__input'
             />
           </label>
-
-          <label htmlFor='apellido' className='findUser__label'>
-            <MdPermIdentity /> Apellido:
-            <input
-              type='text'
-              name='apellido'
-              id='apellido'
-              value={values.apellido}
-              onChange={handleChange}
-              className='findUser__input'
-            />
-          </label>
-
           <label htmlFor='dni' className='findUser__label'>
             <FaRegAddressCard /> DNI:
             <input
@@ -265,17 +255,14 @@ useEffect(()=>{
                 <p>Dirección: {item.direccion}</p>
                 <p>Telefono/s: {item.telefono}</p>
                 <div className='fichero__buttons'>
-                  <button className='addDebt__button'>Editar datos</button>
+                  <button className='addDebt__button' onClick={editClientData}>Editar datos</button>
                   <button className='addDebt__button'
-                    disabled={saldoTotal === 0 || saldoTotal < 0}
-                    onClick={activateAddDebt}
-                    style={{ backgroundColor: debtActivate ? 'red' : '' , backgroundColor: (saldoTotal < 0) ? "grey": ''}}>
-                    {debtActivate ? "Cancelar" : "Añadir producto al fichero"}
-                  </button>
+                  disabled={saldoTotal === 0 || saldoTotal < 0}
+                  onClick={activateAddDebt}
+                  style={{ backgroundColor: debtActivate ? 'red' : '' }}>
+                  {debtActivate ? "Cancelar" : "Añadir producto al fichero"}
+                </button>
                 </div>
-
-
-
               </div>
 
             )
@@ -284,8 +271,7 @@ useEffect(()=>{
           {debtActivate ? <AddDebt /> : ""}
 
         </div>
-        <p className='fichero__title'>{datosDeudor ? "Fichero de " + datosDelCliente[0].nombre : ""}</p>
-
+        <p className='fichero__title'>{datosDeudor ? "Fichero de " + datosDelCliente[0].nombre + " " + datosDelCliente[0].apellido : ""}</p>
         <div className={datosDeudor && datosDeudor.length > 0 && datosDeudor ? 'fichero__cliente' : ""}>
           {datosDeudor && datosDeudor ? datosDeudor.map((item, index) => {
 
@@ -339,6 +325,7 @@ useEffect(()=>{
                     disabled={oneProduct }
                     style={{backgroundColor: oneProduct  ? "grey" : ""}}
                     >Eliminar</button>
+                    <button >Editar Producto</button>
                     {/* <button onClick={() => showModal(index)} disabled={(processingDebtChange() - processingTotalChange()) == 0}
                       style={{ backgroundColor: (processingDebtChange() - processingTotalChange()) == 0 ? 'grey' : '' }}
                     >Hacer entrega</button> */}
@@ -363,16 +350,15 @@ useEffect(()=>{
               )}
             </div>
             <div>
-              {saldoTotal < 0 || saldoTotal === 0 && (
+              {(saldoTotal < 0 || saldoTotal == 0) && (
                 <p style={{ color: "red", fontWeight: "bold" }}>
-                  La cuenta ya esta en 0, por favor antes de seguir agregando productos precione el botón <strong> "Cancelar Todo" </strong>
-                  para guardar los cambios y limpiar esta sección
+                  La cuenta ya esta en 0, haca click en <strong>Cancelar cuenta</strong> para guardar y limpiar esta sección
                 </p>
               )}
             </div>
-            <button onClick={deleteAllProducts}>Cancelar todo</button>
-            <button onClick={mostrarModalEntregasTotales} disabled={saldoTotal < 0 || saldoTotal === 0}
-              style={{ backgroundColor: saldoTotal < 0 || saldoTotal === 0 ? 'grey' : '' }}
+            <button onClick={deleteAllProducts}>Cancelar cuenta</button>
+            <button onClick={mostrarModalEntregasTotales} disabled={saldoTotal < 0 || saldoTotal == 0}
+              style={{ backgroundColor: saldoTotal < 0 || saldoTotal == 0 ? 'grey' : '' }}
             >Hacer una entrega</button>
             <p className="fichero__total"><strong>Registro de entregas</strong></p>
             {getRegisterPaysData && getRegisterPaysData.length > 0 ? (
@@ -395,6 +381,7 @@ useEffect(()=>{
       </div>
       {activateModal ? <Example show={showModal} payData={payData} /> : ""}
       {activateModalEntregasTotales ? <PagosTotales mostrarModalEntregasTotales={mostrarModalEntregasTotales} entregasTotalesData={entregasTotalesData} saldoTotal={SaldoTotalParaModal()} /> : ""}
+      {activateEditClientDataModal ? <EditarDatosCliente mostrarModal={editClientData}></EditarDatosCliente>: ""}
     </>
   );
 }
