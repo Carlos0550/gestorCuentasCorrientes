@@ -23,7 +23,7 @@ export const AppContextProvider = ({ children }) => {
   const createUser = async (values) => {
     setCreandoUsuario(true)
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/create", values);
+      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/create", values);
       console.log("Response:", response.data);
 
       if (response.status === 201) {
@@ -106,9 +106,8 @@ export const AppContextProvider = ({ children }) => {
 
     setBuscandoUsuario(true)
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/find", values)
+      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/find", values)
       setDatosDelCliente(response.data)
-
       // console.log(response.data)
       if (response.status === 201) {
         const Toast = Swal.mixin({
@@ -228,7 +227,7 @@ export const AppContextProvider = ({ children }) => {
         setIdDeudor(item.id_deudor);
 
         try {
-          const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/retrieveDebtCustomer", { idDeudor });
+          const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/retrieveDebtCustomer", { idDeudor });
           setDatosDeudor(response.data)
           // console.log("Deudas del cleinte recuperadas", response.data);
         } catch (error) {
@@ -243,7 +242,7 @@ export const AppContextProvider = ({ children }) => {
         setIdDeudor(item.id_deudor);
 
         try {
-          const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/retrieveDebtCustomer", { idDeudor });
+          const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/retrieveDebtCustomer", { idDeudor });
           setDatosDeudor(response.data)
 
           console.log("Deudas del cliente recuperadas", response.data);
@@ -259,7 +258,7 @@ export const AppContextProvider = ({ children }) => {
     console.log(values)
     setAgregandoDeuda(true)
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/addDebt", {
+      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/addDebt", {
         values: values,
         nombreCompleto: nombreCompleto
       });
@@ -331,7 +330,7 @@ export const AppContextProvider = ({ children }) => {
         console.log("nuevo valor", nuevoValor);
         console.log("entrega", entrega);
 
-        const response = await axios.put('https://gestioncorrienteserver-production.up.railway.app/api/debts/updateDebtCustomer', {
+        const response = await axios.put('https://gestioncorrienteserver-production.up.railway.app:10589/api/debts/updateDebtCustomer', {
           fechaEntrega: formData.get('fechaEntrega'),
           id: formData.get('id'),
           nuevoValor: entrega,
@@ -372,7 +371,7 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app/api/clients/getAllDebts");
+        const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/getAllDebts");
         setAllDebts(response.data);
       } catch (error) {
         console.error("Error al obtener todas las deudas:", error);
@@ -394,7 +393,7 @@ export const AppContextProvider = ({ children }) => {
 
   const deleteIndividualDebt = async (id) => {
     try {
-      const response = await axios.delete("https://gestioncorrienteserver-production.up.railway.app/api/clients/deleteIndividualDebt", { data: { idDelete: id } });
+      const response = await axios.delete("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/deleteIndividualDebt", { data: { idDelete: id } });
       traerDatosDeudor();
       setTimeout(() => {
         mostrarPagosTotales()
@@ -438,7 +437,7 @@ export const AppContextProvider = ({ children }) => {
       console.log("Datos del fichero: ", pair[0], ":", pair[1])
     }
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/cancelarFichero", formData, {
+      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/cancelarFichero", formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -490,7 +489,7 @@ export const AppContextProvider = ({ children }) => {
       console.log("Recibiendo en la funcion (insertTotalPay):", pair[0] + ":" + pair[1])
     }
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/insertTotalPays",
+      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/insertTotalPays",
         {
           data:
           {
@@ -511,7 +510,7 @@ export const AppContextProvider = ({ children }) => {
     if (idDeudor) {
       timeout = setTimeout(async () => {
         try {
-          const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app/api/clients/getTotalPays", {
+          const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/getTotalPays", {
             params: { id_deudor: idDeudor }
           });
           setPagosTotalesData(response.data);
@@ -527,7 +526,7 @@ export const AppContextProvider = ({ children }) => {
 
   const mostrarPagosTotales = async () => {
     try {
-      const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app/api/clients/getTotalPays", {
+      const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app/api:10589/clients/getTotalPays", {
         params: { id_deudor: idDeudor }
       });
       setPagosTotalesData(response.data);
@@ -556,7 +555,7 @@ export const AppContextProvider = ({ children }) => {
     if (idDeudor) {
       timeout = setTimeout(async () => {
         try {
-          const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app/api/clients/getRegisterPays", {
+          const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/getRegisterPays", {
             params: { id_deudor: idDeudor }
           });
           setGetRegisterPaysData(response.data);
@@ -568,7 +567,7 @@ export const AppContextProvider = ({ children }) => {
   }, [idDeudor, datosDelCliente])
   async function getRegistersPays() {
     try {
-      const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app/api/clients/getRegisterPays", {
+      const response = await axios.get("https://gestioncorrienteserver-production.up.railway.app:10589/api/clients/getRegisterPays", {
         params: { id_deudor: idDeudor }
       });
       setGetRegisterPaysData(response.data);
@@ -585,7 +584,7 @@ export const AppContextProvider = ({ children }) => {
   const obtenerHistorial = async (data) => {
     console.log(data)
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/obtenerHistorialDelCliente", data)
+      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api:10589/clients/obtenerHistorialDelCliente", data)
       setDebtHistory(response.data)
       console.log(response.data)
     } catch (error) {
