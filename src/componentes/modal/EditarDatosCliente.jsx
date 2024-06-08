@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
@@ -55,8 +55,7 @@ function EditarDatosCliente({ mostrarModal }) {
         if (!isNaN(value) && (datosDelCliente) && (value !== undefined || value !== null)) {
             var formDataEntregas = new FormData()
             var date = new Date();
-
-            {
+        {
                 datosDelCliente && datosDelCliente.map((item) => {
                     formDataEntregas.append("monto_entrega", value)
                     formDataEntregas.append("fecha_entrega", date.toISOString().split('T')[0])

@@ -12,6 +12,8 @@ function Login() {
             const { data, error } = await supabase.auth.getSession()
             if (data.session) {
                 navigate('/debtHistory')
+            }else{
+                console.log(error)
             }
         })()
     },[])

@@ -1,7 +1,6 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../componentes/context';
 import { IoPerson } from 'react-icons/io5';
-import { MdPermIdentity, MdAttachEmail } from 'react-icons/md';
 import { FaRegAddressCard } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
@@ -21,6 +20,8 @@ function Clientes() {
         const { data, error } = await supabase.auth.getSession()
         if (!data.session) {
             navigate('/login')
+        }else{
+          console.log(error)
         }
     })()
 },[])
@@ -28,9 +29,9 @@ function Clientes() {
   let day = date.getDate()
   let month = date.getMonth() + 1
   let year = date.getFullYear()
-  let fullDateToday = `${day}/${month}/${year}`
+  //let fullDateToday = `${day}/${month}/${year}`
   const { findUser, buscandoUsuario, datosDelCliente, datosDeudor, activateAddDebt, debtActivate, deleteIndividualDebt, cancelarFichero, pagosTotalesData,
-    getRegistersPays, getRegisterPaysData
+     getRegisterPaysData
 
   } = useAppContext();
 
@@ -96,7 +97,7 @@ function Clientes() {
       }
     });
   }
-  let oneProduct = datosDeudor && datosDeudor.length == 1 ? datosDeudor.map((item)=> item.precio_unitario)[0] : 0
+  let oneProduct = datosDeudor && datosDeudor.length === 1 ? datosDeudor.map((item)=> item.precio_unitario)[0] : 0
  
   const deleteAllProducts = () => {
     // let formData = new FormData()
@@ -362,14 +363,14 @@ function Clientes() {
               )}
             </div>
             <div>
-              {(saldoTotal < 0 || saldoTotal == 0) && (
+              {(saldoTotal < 0 || saldoTotal === 0) && (
                 <p style={{ color: "red", fontWeight: "bold" }}>
                   La cuenta ya esta en 0, haca click en <strong>Cancelar cuenta</strong> para guardar y limpiar esta sección
                 </p>
               )}
             </div>
             <button onClick={deleteAllProducts}>Cancelar cuenta</button>
-            <button onClick={mostrarModalEntregasTotales} disabled={saldoTotal < 0 || saldoTotal == 0}
+            <button onClick={mostrarModalEntregasTotales} disabled={saldoTotal < 0 || saldoTotal === 0}
               style={{ backgroundColor: saldoTotal < 0 || saldoTotal == 0 ? 'grey' : '' }}
             >Hacer una entrega</button>
             <p className="fichero__total"><strong>Registro de entregas</strong></p>

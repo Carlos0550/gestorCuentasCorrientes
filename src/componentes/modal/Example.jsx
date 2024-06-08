@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
@@ -57,7 +57,7 @@ function Example({ show, payData }) {
       }else{
         confirmChanges(e)
       }
-    }else if(value == ""){
+    }else if(value === ""){
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",

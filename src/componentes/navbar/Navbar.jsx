@@ -4,7 +4,7 @@ import { IoMdMenu } from 'react-icons/io';
 import { useAppContext } from '../context';
 import { supabase } from '../../Auth/supabase';
 function Navbar({ children }) {
-  const { closeSession, loggingIn, AuthData } = useAppContext();
+  const { closeSession, loggingIn } = useAppContext();
   const [isLoggedIn, setIsLoggedIn] = useState(null)
   const [executionCount, setExecutionCount] = useState(0)
   useEffect(() => {

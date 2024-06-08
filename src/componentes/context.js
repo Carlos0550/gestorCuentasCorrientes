@@ -331,7 +331,7 @@ export const AppContextProvider = ({ children }) => {
         console.log("nuevo valor", nuevoValor);
         console.log("entrega", entrega);
 
-        const response = await axios.put('https://gestioncorrienteserver-production.up.railway.app/api/debts/updateDebtCustomer', {
+       await axios.put('https://gestioncorrienteserver-production.up.railway.app/api/debts/updateDebtCustomer', {
           fechaEntrega: formData.get('fechaEntrega'),
           id: formData.get('id'),
           nuevoValor: entrega,
@@ -394,7 +394,7 @@ export const AppContextProvider = ({ children }) => {
 
   const deleteIndividualDebt = async (id) => {
     try {
-      const response = await axios.delete("https://gestioncorrienteserver-production.up.railway.app/api/clients/deleteIndividualDebt", { data: { idDelete: id } });
+      await axios.delete("https://gestioncorrienteserver-production.up.railway.app/api/clients/deleteIndividualDebt", { data: { idDelete: id } });
       traerDatosDeudor();
       setTimeout(() => {
         mostrarPagosTotales()
@@ -438,7 +438,7 @@ export const AppContextProvider = ({ children }) => {
       console.log("Datos del fichero: ", pair[0], ":", pair[1])
     }
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/cancelarFichero", formData, {
+      await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/cancelarFichero", formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
