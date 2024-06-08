@@ -16,6 +16,8 @@ function CrearUsuario() {
         const { data, error } = await supabase.auth.getSession()
         if (!data.session) {
             navigate('/login')
+        }else{
+          console.log(error)
         }
     })()
 },[])

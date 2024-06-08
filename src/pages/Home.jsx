@@ -12,6 +12,8 @@ function Home() {
         const { data, error } = await supabase.auth.getSession()
         if (!data.session) {
             navigate('/login')
+        }else{
+          console.log(error)
         }
     })()
 },[])
@@ -21,7 +23,7 @@ function Home() {
   let day = date.getDate()
   let month = date.getMonth() + 1
   let year = date.getFullYear()
-  let fullDate = `${day}/${month}/${year}`
+  //let fullDate = `${day}/${month}/${year}`
 
   const [values, setValues] = useState({
     nombre: '',
