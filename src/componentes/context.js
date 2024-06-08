@@ -23,7 +23,7 @@ export const AppContextProvider = ({ children }) => {
   const createUser = async (values) => {
     setCreandoUsuario(true)
     try {
-      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/:10589/api/clients/create", values);
+      const response = await axios.post("https://gestioncorrienteserver-production.up.railway.app/api/clients/create", values);
       console.log("Response:", response.data);
 
       if (response.status === 201) {
