@@ -637,7 +637,24 @@ export const AppContextProvider = ({ children }) => {
         email: dataValues.email,
         password: dataValues.password,
       })
-      if (data) {
+      if (error) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "error",
+          title: "Hubo un error, intente nuevamente"
+        });
+      }
+      if (data.user !== null || data.session !== null) {
         const Toast = Swal.mixin({
           toast: true,
           position: "top-end",
@@ -651,10 +668,26 @@ export const AppContextProvider = ({ children }) => {
         });
         Toast.fire({
           icon: "success",
-          title: `Bienvenida Claudia`
+          title: `Bienvenido/a a Gestion Corriente`
         });
         setAuthData(data.user)
         navigate("/debtHistory")
+      }else{
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "error",
+          title: `Credenciales Inválidas`
+        });
       }
       if (error) {
         console.log(error)
