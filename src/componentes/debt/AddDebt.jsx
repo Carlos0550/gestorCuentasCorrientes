@@ -99,8 +99,10 @@ function AddDebt() {
         })
         if(verifyArray()){
             agregarDeuda(products)
-            traerDatosDeudor()
             activateAddDebt()
+            setTimeout(() => {
+                traerDatosDeudor()
+            }, 1000);
             
         }else{
             const Toast = Swal.mixin({

@@ -303,6 +303,7 @@ export const AppContextProvider = ({ children }) => {
       setTimeout(() => {
         setAgregandoDeuda(false)
         mostrarPagosTotales()
+        
         getRegistersPays()
       }, 500);
     }
