@@ -18,12 +18,14 @@
     text-align: center;
     margin: .5em;
     text-transform: capitalize;
+    font-size: 5em;
     
 }
 .registerUser__form{
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 95%;
+    
     height: auto;
     border: 2px solid rgba(112, 112, 112, 0.87);
     padding: 1em;
@@ -38,7 +40,7 @@
 .registerUser__label{
     display: inline-block;
     width: 100%;
-    font-size: 1.2em;
+    font-size: 2.5em;
     margin: .2em;
     text-transform: capitalize;
     border: 2px solid black;
@@ -63,10 +65,10 @@
     outline: none;
 }
 .registerUser__button{
-    width: 30%;
-    font-size: 1.1em;
+    width: 50%;
+    font-size: 2em;
     padding: .1em;
-    background-color: rgb(1, 197, 1);
+    background-color: #0d1321;
     border: none;
     border-radius: 10px;
     color: white;
@@ -76,7 +78,8 @@
     transition: all .2s ease-in-out;
 }
 .registerUser__button:hover{
-    transform: scale(1.05);
+    transform: scale(1.02);
+    box-shadow: 0 0 50px #0d1321;
 }
 .registerUser__button:active{
     transform: scale(0.9);
