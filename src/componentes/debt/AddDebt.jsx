@@ -151,7 +151,7 @@ function AddDebt() {
 
             {/* Visualización de los productos agregados */}
             <div className="productos-agregados">
-                <h3>Confirmación de productos:</h3>
+                <h3 className='confirm__products-h3'>Confirmación de productos:</h3>
                 {products.map((product, index) => (
                     <div key={index} className="producto">
                         <p>#{index+1}</p>

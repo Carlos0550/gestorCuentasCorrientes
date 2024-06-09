@@ -15,6 +15,7 @@
 }
 .add__producto-label{
     font-weight: bold;
+    font-size: 2.5em;
     margin-bottom: .5em;
     margin-top: .5em;
 }
@@ -28,6 +29,7 @@
 }
 .btn__saveProduct{
     padding: .5em;
+    font-size: 2em;
     border: none;
     margin: 0 ;
     border-radius: 10px;
@@ -43,17 +45,18 @@
 .btn__saveProduct:active{
     transform: scale(0.9);
 }
-
-.btn__addOtherProduct{
-    width: 30%;
-    margin: 1em;
-    background-color: rgba(255,255,255,0.5);
+.confirm__products-h3{
+    font-size: 3em;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    background-color: white;
+    padding: 1em;
     border: none;
     border-radius: 10px;
-    outline: 2px solid rgb(216, 216, 216);
-    padding: .5em;
-    transition: all .2s ease-in-out;
+    outline: 5px solid rgba(112, 112, 112, 0.87);
 }
+
+
 
 .producto{
     outline: 2px solid rgba(112, 112, 112, 0.87);
@@ -63,7 +66,7 @@
 }
 
 .btn-edit, .btn-delete, .btn-save-allProducts{
-
+    font-size: 2em;
     padding: .5em;
     border: none;
     margin: 0 ;

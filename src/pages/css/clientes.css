@@ -15,15 +15,16 @@
 .findUser__h1 {
     text-align: center;
     margin: .5em;
+    font-size: 3.5em;
     text-transform: capitalize;
 }
 
 .findUser__form {
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 95%;
     height: auto;
-    border: 2px solid rgba(112, 112, 112, 0.87);
+    border: 5px solid rgba(112, 112, 112, 0.87);
     padding: 1em;
     margin: 0 auto;
     
@@ -37,10 +38,10 @@
 .findUser__label {
     display: inline-block;
     width: 100%;
-    font-size: 1.2em;
+    font-size: 2.5em;
     margin: .2em;
     text-transform: capitalize;
-    border: 2px solid black;
+    border: 5px solid black;
     border-radius: 5px;
     padding: .2em;
     background-color: #f0ebd86c;
@@ -53,19 +54,19 @@
 .findUser__input {
     display: block;
     width: 100%;
-    border: 1px solid rgb(216, 216, 216);
+    border: 5px solid rgb(112, 112, 112);
     border-radius: 10px;
     padding: .5em;
     font-size: .9em;
 }
 
 .findUser__input:focus {
-    outline: none;
+    outline: 7px solid rgba(87, 87, 87, 0.75);
 }
 
 .findUser__button {
     min-width: 25%;
-    font-size: 1.1em;
+    font-size: 2.3em;
     padding: .1em;
     background-color: #0d1321;
     border: none;
@@ -86,6 +87,7 @@
 }
 .addDebt__button{
     padding: .5em;
+    font-size: 2.5em;
     border: none;
     margin: 0 ;
     border-radius: 10px;
@@ -120,6 +122,7 @@
 }
 .user__container p{
     max-width: 100%;
+    font-size: 2.5em;
     background-color: rgba(255, 255, 255, 0.90);
     padding: .5em;
     border-radius: 10px;
@@ -137,7 +140,7 @@
     padding: 1em;
     margin: 0 auto;
     margin-top: 1em;
-    font-size: 1em;
+    font-size: 2em;
     justify-content: center;
 
 }
@@ -145,6 +148,7 @@
     background-color: rgba(255, 255, 255, 0.90);
     padding: .5em;
     border-radius: 10px;
+    font-size: 2.5em;
     font-weight: bold;
     margin: 1em;
 }
@@ -180,6 +184,7 @@
 }
 .fichero__datos-finales p{
     max-width: 100%;
+    font-size: 2.3em;
     background-color: rgba(255, 255, 255, 0.90);
     padding: .5em;
     border-radius: 10px;
@@ -187,6 +192,8 @@
 }
 .fichero__datos-finales button{
     padding: .5em;
+    font-size: 2.3em;
+
     border: none;
     margin: 0 ;
     border-radius: 10px;

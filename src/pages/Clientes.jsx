@@ -219,7 +219,7 @@ function Clientes() {
   return (
     <>
       <div className='wrapper__form-findUser'>
-        <h1 className='findUser__h1'>Buscar Cliente</h1>
+        <h1 className='findUser__h1'>Agregar Deudas</h1>
         <form className='findUser__form'>
           <label htmlFor='nombre' className='findUser__label'>
             <IoPerson /> Nombre:
