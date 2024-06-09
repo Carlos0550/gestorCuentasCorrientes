@@ -74,7 +74,7 @@ header {
     transform: scale(1.05);
     box-shadow: 0 0 50px red;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 900px) {
 
     .abrir_menu,
     .cerrar_menu {
