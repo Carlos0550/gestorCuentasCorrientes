@@ -96,30 +96,30 @@ function EditarDatosCliente({ mostrarModal }) {
                 <p style={{color: "red", fontSize: "2em"}}>Todos los campos son obligatorios</p>
                 <div style={{fontSize: "3em"}}>
                     Nombre completo
-                  <input type="text" value={values.nombre_completo} name='nombre_completo' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.nombre_completo} name='nombre_completo' onChange={handleInput} style={{ width: "90%" }} className='findUser__input' />
                 </div>
                 <div style={{fontSize: "3em"}}>
                     Apellido
-                  <input type="text" value={values.apellido} name='apellido' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.apellido} name='apellido' onChange={handleInput} style={{ width: "90%" }} className='findUser__input' />
                 </div>
                 <div style={{fontSize: "3em"}}>
                     Correo electronico
-                  <input type="text" value={values.correo} name='correo' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.correo} name='correo' onChange={handleInput} style={{ width: "90%" }} className='findUser__input' />
                 </div>
                 <div style={{fontSize: "3em"}}>
                     DNI
-                  <input type="text" value={values.dni} name='dni' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.dni} name='dni' onChange={handleInput} style={{ width: "90%" }} className='findUser__input' />
                 </div>
                 <div style={{fontSize: "3em"}}>
                     Dirección
-                  <input type="text" value={values.direccion} name='direccion' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.direccion} name='direccion' onChange={handleInput} style={{ width: "90%" }} className='findUser__input' />
                 </div>
                 <div style={{fontSize: "3em"}}>
                     Telefono
-                  <input type="text" value={values.telefono} name='telefono' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.telefono} name='telefono' onChange={handleInput} style={{ width: "90%" }} className='findUser__input' />
                 </div>
                 <div>
-                  <button onClick={validateForm} style={{ marginTop: ".5em" }} className='addDebt__button'>Actualizar datos</button>
+                  <button onClick={validateForm} style={{ marginTop: ".5em" }} className='addDebt__button'>{isEditing ? "Actualizando" : "Actualizar cliente"}</button>
                 </div>
               </div>
             )}

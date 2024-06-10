@@ -626,21 +626,78 @@ export const AppContextProvider = ({ children }) => {
     }
   }
   const [isEditing, setIsEditing] = useState(false)
-  const editClientData = async (values) =>{
-    setIsEditing(true)
+  const editClientData = async (values, idDeudor) => {
+    setIsEditing(true);
     try {
       const response = await axios.put("https://gestioncorrienteserver-production.up.railway.app/api/clients/updateClientData", {
         values,
         idDeudor
-      })
-      console.log(response)
+      });
+  
+      if (response.status === 404) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          customClass: {
+            popup: 'my-toast'
+          },
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "error",
+          title: "Usuario no encontrado"
+        });
+      } else if (response.status === 200) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          customClass: {
+            popup: 'my-toast'
+          },
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "success",
+          title: "El usuario fue actualizado"
+        });
+      }
     } catch (error) {
-      console.log(error)
-
-    }finally{
-      setIsEditing(false)
+      console.log(error);
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        customClass: {
+          popup: 'my-toast'
+        },
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire({
+        icon: "error",
+        title: "Error actualizando el usuario"
+      });
+    } finally {
+      setIsEditing(false);
     }
-  }
+  };
+  
 
 
   const [loggingIn, setLoggingIn] = useState(false);
