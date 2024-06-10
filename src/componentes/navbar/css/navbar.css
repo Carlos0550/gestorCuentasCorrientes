@@ -15,7 +15,7 @@ header {
 
 
 .logo {
-    font-size: 3em;
+    font-size: 2.5em;
     max-width: 5rem;
     color: white;
 }
@@ -39,7 +39,7 @@ header {
 .nav-list li a {
     text-decoration: none;
     color: white;
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .abrir_menu,
@@ -74,7 +74,8 @@ header {
     transform: scale(1.05);
     box-shadow: 0 0 50px red;
 }
-@media(max-width: 768px) {
+
+@media(max-width: 1000px) {
 
     
     .abrir_menu,
