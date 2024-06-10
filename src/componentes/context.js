@@ -579,9 +579,7 @@ export const AppContextProvider = ({ children }) => {
     }
   }
 
-  const editClientData = (values) => {
-
-  }
+  
   const [debtHistory, setDebtHistory] = useState([])
   const obtenerHistorial = async (data) => {
     console.log(data)
@@ -627,6 +625,23 @@ export const AppContextProvider = ({ children }) => {
       }
     }
   }
+  const [isEditing, setIsEditing] = useState(false)
+  const editClientData = async (values) =>{
+    setIsEditing(true)
+    try {
+      const response = await axios.put("http://localhost:3001/api/clients/updateClientData", {
+        values,
+        idDeudor
+      })
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+
+    }finally{
+      setIsEditing(false)
+    }
+  }
+
 
   const [loggingIn, setLoggingIn] = useState(false);
   const [AuthData, setAuthData] = useState(null)
@@ -749,7 +764,9 @@ export const AppContextProvider = ({ children }) => {
       getRegistersPays, getRegisterPaysData,
       editClientData
       , debtHistory, obtenerHistorial,
-      login, loggingIn, closeSession, AuthData
+      login, loggingIn, closeSession, AuthData,
+      isEditing,editClientData
+
 
 
     }}>

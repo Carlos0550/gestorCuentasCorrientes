@@ -12,6 +12,7 @@
 }
 
 .p__client-name{
+    font-size: 2.2em;
     background-color: #0D1321;
     outline: 3px solid rgba(255, 255, 255, 0.8);
     border-radius: 1em;
@@ -20,8 +21,10 @@
     box-shadow: 0 0 15px black;
 }
 .wrapper-products{
-    border: 2px solid rgba(190, 190, 190, 0.8);
-    border-radius: 5px;
+    font-size: 2.1em;
+
+    border: 6px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
     background-color: white;
     margin: .5em;
     text-align: left;

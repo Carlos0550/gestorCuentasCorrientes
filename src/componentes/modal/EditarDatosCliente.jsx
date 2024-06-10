@@ -5,19 +5,37 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import { useAppContext } from '../context';
 function EditarDatosCliente({ mostrarModal }) {
-    const { datosDelCliente, mostrarPagosTotales, getRegistersPays, mostrarModalEntregasTotales } = useAppContext()
-    const [value, setValue] = useState("")
+    const { datosDelCliente, mostrarPagosTotales, getRegistersPays, mostrarModalEntregasTotales,
+        isEditing, //loader
+        editClientData //function
+
+     } = useAppContext()
+    const [values, setValues] = useState({
+        nombre_completo: "",
+        apellido: "",
+        correo: "",
+        dni: "",
+        direccion: "",
+        telefono: ""
+    })
     const handleInput = (e) => {
-        setValue(e.target.value)
+        const {value, name} = e.target
+        setValues((prevState)=>({
+            ...prevState,
+            [name]: value
+        }))
     }
     const validateForm = (e) => {
-        if (value === "") {
+        if (values.apellido === "" || values.nombre_completo === "" || values.direccion === "" || values.correo === "" || values.dni === "" || values.telefono === "") {
             const Toast = Swal.mixin({
                 toast: true,
                 position: "top-end",
                 showConfirmButton: false,
                 timer: 1500,
                 timerProgressBar: true,
+                customClass:{
+                    popup: 'my-toast'
+                },
                 didOpen: (toast) => {
                     toast.onmouseenter = Swal.stopTimer;
                     toast.onmouseleave = Swal.resumeTimer;
@@ -25,25 +43,9 @@ function EditarDatosCliente({ mostrarModal }) {
             });
             Toast.fire({
                 icon: "error",
-                title: "Ingresa un valor"
+                title: "Hay algunos campos vacios"
             });
             return
-        } else if(""){
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                  toast.onmouseenter = Swal.stopTimer;
-                  toast.onmouseleave = Swal.resumeTimer;
-                }
-              });
-              Toast.fire({
-                icon: "error",
-                title: "No puede introducir un valor mayor al saldo restante"
-              });
         }else{
             confirmChanges(e)
         }
@@ -51,59 +53,34 @@ function EditarDatosCliente({ mostrarModal }) {
 
     const confirmChanges = (e) => {
         e.preventDefault();
-        // Asegúrate de que value esté definido y sea válido
-        if (!isNaN(value) && (datosDelCliente) && (value !== undefined || value !== null)) {
-            var formDataEntregas = new FormData()
-            var date = new Date();
-        {
-                datosDelCliente && datosDelCliente.map((item) => {
-                    formDataEntregas.append("monto_entrega", value)
-                    formDataEntregas.append("fecha_entrega", date.toISOString().split('T')[0])
-                    formDataEntregas.append("id_cliente_deudor", item.id_usuario)
-                })
+        
+        Swal.fire({
+            title: "Guardar Cambios?",
+            showDenyButton: true,
+            confirmButtonText: "Guardar",
+            denyButtonText: `Cancelar`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //envio de datos
+                editClientData(values)
+            } else if (result.isDenied) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Cambios cancelados"
+                });
             }
-
-
-            Swal.fire({
-                title: "Guardar Cambios?",
-                showDenyButton: true,
-                confirmButtonText: "Guardar",
-                denyButtonText: `Cancelar`
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    //envio de datos aqui
-                    
-                    setTimeout(() => {
-                        mostrarPagosTotales()
-                        getRegistersPays()
-                        mostrarModalEntregasTotales()
-                    }, 1000);
-                } else if (result.isDenied) {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 1500,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
-                        }
-                    });
-                    Toast.fire({
-                        icon: "success",
-                        title: "Cambios cancelados"
-                    });
-                }
-            });
-        } else {
-            // Manejo de error si value no es un número válido
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'El valor ingresado no es válido. Por favor, ingrese un número.'
-            });
-        }
+        });
     };
 
 
@@ -111,39 +88,38 @@ function EditarDatosCliente({ mostrarModal }) {
     const showEditData = () => {
         
         const item = datosDelCliente && datosDelCliente[0]; 
-        console.log(datosDelCliente)
         return (
           <>
             {item && (
               <div>
-                <Modal.Title>Editando datos de: {item.nombre} {item.apellido}</Modal.Title>
-                <p style={{color: "red"}}>Todos los campos son obligatorios</p>
-                <div>
+                <Modal.Title style={{fontSize: "3em"}}>Editando datos de: {item.nombre} {item.apellido}</Modal.Title>
+                <p style={{color: "red", fontSize: "2em"}}>Todos los campos son obligatorios</p>
+                <div style={{fontSize: "3em"}}>
                     Nombre completo
-                  <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.nombre_completo} name='nombre_completo' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
                 </div>
-                <div>
+                <div style={{fontSize: "3em"}}>
                     Apellido
-                  <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.apellido} name='apellido' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
                 </div>
-                <div>
+                <div style={{fontSize: "3em"}}>
                     Correo electronico
-                  <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.correo} name='correo' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
                 </div>
-                <div>
+                <div style={{fontSize: "3em"}}>
                     DNI
-                  <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.dni} name='dni' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
                 </div>
-                <div>
+                <div style={{fontSize: "3em"}}>
                     Dirección
-                  <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.direccion} name='direccion' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
                 </div>
-                <div>
+                <div style={{fontSize: "3em"}}>
                     Telefono
-                  <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
+                  <input type="text" value={values.telefono} name='telefono' onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
                 </div>
                 <div>
-                  <button onClick={validateForm} style={{ marginTop: ".5em" }} className='addDebt__button'>Guardar Entrega</button>
+                  <button onClick={validateForm} style={{ marginTop: ".5em" }} className='addDebt__button'>Actualizar datos</button>
                 </div>
               </div>
             )}
@@ -157,13 +133,13 @@ function EditarDatosCliente({ mostrarModal }) {
         <>
             <Modal show={mostrarModal}>
                 <Modal.Header closeButton onClick={mostrarModal}>
-                    <Modal.Title>Editar Datos del cliente</Modal.Title>
+                    {/* nothing */}
                 </Modal.Header>
                 <Modal.Body>
                     {showEditData()}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={mostrarModal}>Cerrar</Button>
+                    <Button variant="danger" onClick={mostrarModal} style={{fontSize: "3em"}}>Cerrar</Button>
                 </Modal.Footer>
             </Modal>
         </>
