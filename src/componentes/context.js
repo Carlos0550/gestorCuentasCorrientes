@@ -629,7 +629,7 @@ export const AppContextProvider = ({ children }) => {
   const editClientData = async (values) =>{
     setIsEditing(true)
     try {
-      const response = await axios.put("http://localhost:3001/api/clients/updateClientData", {
+      const response = await axios.put("https://gestioncorrienteserver-production.up.railway.app/api/clients/updateClientData", {
         values,
         idDeudor
       })
