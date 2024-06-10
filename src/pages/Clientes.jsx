@@ -363,14 +363,14 @@ function Clientes() {
               )}
             </div>
             <div>
-              {(saldoTotal < 0 || saldoTotal === 0) && (
+              {(saldoTotal <= 0 ) && (
                 <p style={{ color: "red", fontWeight: "bold" }}>
                   La cuenta ya esta en 0, haca click en <strong>Cancelar cuenta</strong> para guardar y limpiar esta sección
                 </p>
               )}
             </div>
             <button onClick={deleteAllProducts}>Cancelar cuenta</button>
-            <button onClick={mostrarModalEntregasTotales} disabled={saldoTotal < 0 || saldoTotal === 0}
+            <button onClick={mostrarModalEntregasTotales} disabled={saldoTotal <= 0 }
               style={{ backgroundColor: saldoTotal < 0 || saldoTotal == 0 ? 'grey' : '' }}
             >Hacer una entrega</button>
             <p className="fichero__total"><strong>Registro de entregas</strong></p>

@@ -44,6 +44,22 @@ function PagosTotales({ mostrarModalEntregasTotales, entregasTotalesData, saldoT
                 icon: "error",
                 title: "No puede introducir un valor mayor al saldo restante"
               });
+        }else if(value == 0){
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "error",
+                title: "Debe introducir un valor mayor a 0"
+              });
         }else{
             confirmChanges(e)
         }
@@ -65,7 +81,7 @@ function PagosTotales({ mostrarModalEntregasTotales, entregasTotalesData, saldoT
             }
 
 
-            Swal.fire({
+            Swal.fire ({
                 title: "Guardar Cambios?",
                 showDenyButton: true,
                 confirmButtonText: "Guardar",
@@ -118,21 +134,19 @@ function PagosTotales({ mostrarModalEntregasTotales, entregasTotalesData, saldoT
         return (
           <>
             {item && (
-              <div>
-                <Modal.Title>Datos del cliente</Modal.Title>
-                <div>
+              <div >
+                <Modal.Title style={{fontSize: "2em"}}>Datos del cliente</Modal.Title>
+                <div style={{fontSize: "2em"}}>
                   <strong>Nombre: {item.nombre_completo}</strong>
                 </div>
-                <div>
+                <div style={{fontSize: "2em"}}>
                   <strong>Saldo: ${saldoTotal}</strong>
-                </div>
-                <Modal.Title>Ingrese el monto de la entrega:</Modal.Title>
-                <div>
+                </div >
+                <Modal.Title style={{fontSize: "2em"}}>Ingrese el monto de la entrega:</Modal.Title>
+                <div style={{fontSize: "2em"}}>
                   <input type="text" value={value} onChange={handleInput} style={{ width: "50%" }} className='findUser__input' />
                 </div>
-                <div>
-                  <button onClick={validateForm} style={{ marginTop: ".5em" }} className='addDebt__button'>Guardar Entrega</button>
-                </div>
+                <button onClick={validateForm} style={{ marginTop: ".5em" }} className='addDebt__button'>Guardar Entrega</button>
               </div>
             )}
           </>
@@ -145,13 +159,13 @@ function PagosTotales({ mostrarModalEntregasTotales, entregasTotalesData, saldoT
         <>
             <Modal show={mostrarModalEntregasTotales}>
                 <Modal.Header closeButton onClick={mostrarModalEntregasTotales}>
-                    <Modal.Title>Hacer una entrega total</Modal.Title>
+                    <Modal.Title style={{fontSize: "2em"}}>Hacer una entrega total</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body >
                     {showPayData()}
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="danger" onClick={mostrarModalEntregasTotales}>Cerrar</Button>
+                <Modal.Footer >
+                    <Button style={{fontSize: "2em"}} variant="danger" onClick={mostrarModalEntregasTotales}>Cerrar</Button>
                 </Modal.Footer>
             </Modal>
         </>

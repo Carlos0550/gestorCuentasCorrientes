@@ -158,7 +158,7 @@ function Example({ show, payData }) {
   const showPayData = () => {
     return (
       <>
-        <div>
+        <div >
           <strong>ID del Producto</strong> {payData.id}
         </div>
         <div>
