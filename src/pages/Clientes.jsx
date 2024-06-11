@@ -335,8 +335,7 @@ function Clientes() {
                     {/* {datosDeudor && console.log("Antes de eliminar: ",item.id)} */}
 
                     <button onClick={() => getIdDeleteProduct(item.id)}
-                    disabled={oneProduct }
-                    style={{backgroundColor: oneProduct  ? "grey" : ""}}
+                    
                     >Eliminar</button>
                     <button >Editar Producto</button>
                     {/* <button onClick={() => showModal(index)} disabled={(processingDebtChange() - processingTotalChange()) == 0}
